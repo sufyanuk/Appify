@@ -1,15 +1,15 @@
 // Prisma schema — the single source of truth for the database structure.
 //
-// Local development uses SQLite (zero setup, a file at prisma/dev.db).
-// For production, change `provider` to "postgresql" and point DATABASE_URL
-// at a hosted Postgres (Neon, Supabase, Railway…). No other code changes needed.
+// Uses PostgreSQL everywhere (local + production). Point DATABASE_URL at any
+// Postgres: Neon / Supabase / Prisma Postgres (e.g. via the Vercel Marketplace)
+// or a local server. See README → "Running it locally".
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

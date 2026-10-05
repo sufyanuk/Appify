@@ -16,7 +16,7 @@ There's also a protected **Admin Dashboard** where you manage the menu, recipes 
 | Framework  | **Next.js 16** (App Router, React 19, Server Actions)          | Frontend and backend in one project. No separate API server to deploy. |
 | Language   | **TypeScript**                                                 | Catches mistakes early and makes the code easier to follow. |
 | Styling    | **Tailwind CSS v4**                                            | Fast, consistent, responsive styling with no CSS files to maintain. |
-| Database   | **Prisma ORM** + **SQLite** locally, **PostgreSQL** in production | Local setup needs nothing installed. Moving to Postgres is a one-line change. |
+| Database   | **Prisma ORM** + **PostgreSQL**                                | Reliable, free hosted options (Neon, Supabase, Prisma Postgres), and it works on Vercel. |
 | Validation | **Zod**                                                        | Every input is validated on the server. |
 | Auth       | **bcrypt** password hashes + signed **JWT in an httpOnly cookie** (`jose`) | Simple and secure, with no third-party auth service. |
 
@@ -24,11 +24,14 @@ There's also a protected **Admin Dashboard** where you manage the menu, recipes 
 
 ## Running it locally
 
-Requirements: **Node.js 20+**.
+Requirements: **Node.js 20+** and a **PostgreSQL** database. Either option works:
+
+- **Easiest:** a free hosted database from [Neon](https://neon.tech). Create a project and copy its connection string.
+- **Local:** with Docker, run `docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=appify postgres:16`. This matches the default `DATABASE_URL` in `.env.example`.
 
 ```bash
 npm install            # install dependencies (also generates the Prisma client)
-cp .env.example .env   # then edit .env and set SESSION_SECRET (see below)
+cp .env.example .env   # then edit .env: set DATABASE_URL and SESSION_SECRET (see below)
 npm run setup          # create the database tables and load sample data + admin user
 npm run dev            # start the app at http://localhost:3000
 ```
@@ -57,7 +60,7 @@ npm run dev            # start the app at http://localhost:3000
 
 | Variable          | Required | Description |
 | ----------------- | -------- | ----------- |
-| `DATABASE_URL`    | yes      | `file:./dev.db` for local SQLite, or a `postgresql://…` URL in production. |
+| `DATABASE_URL`    | yes      | PostgreSQL connection string (`postgresql://…`). On Vercel it's added for you when you connect a database. |
 | `SESSION_SECRET`  | yes      | Random string, **at least 32 characters**, used to sign admin sessions. Generate one with `openssl rand -base64 32`. |
 | `ADMIN_EMAIL`     | for seeding | Email of the first admin, created by `npm run setup` / `npm run db:seed`. |
 | `ADMIN_PASSWORD`  | for seeding | Password of the first admin. **Change it after your first login.** |
@@ -162,25 +165,18 @@ Design notes:
 
 ---
 
-## Deploying (recommended: Vercel + Neon/Supabase Postgres)
+## Deploying to Vercel
 
-SQLite is a local file, so it isn't suitable for serverless hosting. Use a hosted PostgreSQL instead:
+The project includes a `vercel-build` script. On every deploy it creates or updates the database tables (`prisma db push`), adds the sample data and first admin if they're missing, then builds the app. You don't need to run any commands yourself.
 
-1. **Create a Postgres database** on [Neon](https://neon.tech), [Supabase](https://supabase.com) or [Railway](https://railway.app). The free tiers are fine. Copy its connection string.
-2. **Switch the provider** in `prisma/schema.prisma`:
-   ```prisma
-   datasource db {
-     provider = "postgresql"
-     url      = env("DATABASE_URL")
-   }
-   ```
-3. **Create the tables and seed** from your machine, pointing at the production database:
-   ```bash
-   DATABASE_URL="postgresql://…" ADMIN_EMAIL="you@site.com" ADMIN_PASSWORD="a-strong-password" npm run setup
-   ```
-4. **Push to GitHub and import the repo in [Vercel](https://vercel.com).** Add the environment variables `DATABASE_URL` and `SESSION_SECRET` in the Vercel project settings, then deploy. The build script already runs `prisma generate`.
+1. **Import the GitHub repo** in [Vercel](https://vercel.com/new).
+2. **Add a database.** In the project, go to **Storage → Create Database → Neon** (free tier), connect it to the project for Production and Preview, and Vercel adds `DATABASE_URL` for you.
+3. **Add environment variables** under **Settings → Environment Variables**:
+   - `SESSION_SECRET`: from `openssl rand -base64 32`.
+   - `ADMIN_EMAIL` and `ADMIN_PASSWORD`: your first admin login. Change the password in Admin → Settings after you sign in.
+4. **Set the Build Command** under **Settings → Build & Deployment** to `npm run vercel-build`, then **redeploy**.
 
-You can also deploy to any Node host (Railway, Render, Fly.io, a VPS) with `npm run build && npm start`. On a single server with a persistent disk, SQLite works fine too.
+Any other Node host (Railway, Render, Fly.io, a VPS) works too: run `npm run setup` once against the database, then `npm run build && npm start`.
 
 ---
 
