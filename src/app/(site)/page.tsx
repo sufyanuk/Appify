@@ -1,0 +1,69 @@
+import Link from "next/link";
+import { FoodImage } from "@/components/ui/food-image";
+import { ArrowRightIcon, BagIcon, BookIcon } from "@/components/ui/icons";
+
+const choices = [
+  {
+    href: "/recipes",
+    title: "Browse Easy Recipes",
+    text: "Simple dishes you can make at home in minutes.",
+    image:
+      "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1000&q=75&auto=format&fit=crop",
+    icon: BookIcon,
+  },
+  {
+    href: "/order",
+    title: "Order Food Items",
+    text: "Pick your favourites, choose quantities, done.",
+    image:
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1000&q=75&auto=format&fit=crop",
+    icon: BagIcon,
+  },
+];
+
+export default function HomePage() {
+  return (
+    <div className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6 sm:pt-16">
+      <section className="mx-auto max-w-2xl text-center">
+        <p className="text-sm font-medium text-brand-600">Hungry? Let&apos;s fix that.</p>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+          What would you like to do today?
+        </h1>
+        <p className="mt-4 text-base text-muted sm:text-lg">
+          Cook something easy yourself, or let us cook for you.
+        </p>
+      </section>
+
+      <section className="mt-10 grid gap-5 sm:mt-14 sm:grid-cols-2 sm:gap-6">
+        {choices.map(({ href, title, text, image, icon: Icon }, i) => (
+          <Link
+            key={href}
+            href={href}
+            className="group overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-line/60 transition hover:-translate-y-0.5 hover:shadow-float"
+          >
+            <div className="relative aspect-[16/10] overflow-hidden">
+              <FoodImage
+                src={image}
+                alt=""
+                eager={i === 0}
+                className="h-full w-full transition duration-500 group-hover:scale-[1.03]"
+              />
+            </div>
+            <div className="flex items-center gap-4 p-5 sm:p-6">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
+                <Icon width={22} height={22} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg font-semibold sm:text-xl">{title}</h2>
+                <p className="mt-0.5 text-sm text-muted">{text}</p>
+              </div>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-stone-100 transition group-hover:bg-ink group-hover:text-white">
+                <ArrowRightIcon width={18} height={18} />
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+    </div>
+  );
+}
