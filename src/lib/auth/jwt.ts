@@ -11,12 +11,29 @@ export type SessionPayload = {
   v: number;
 };
 
+/** The example value from .env.example — public, so never safe to use in production. */
+const EXAMPLE_SECRET = "replace-me-with-a-long-random-string-of-32-plus-chars";
+let warnedAboutExample = false;
+
 function getKey(): Uint8Array {
   const secret = process.env.SESSION_SECRET;
   if (!secret || secret.length < 32) {
     throw new Error(
       "SESSION_SECRET is missing or too short. Set a random string of 32+ characters in your environment.",
     );
+  }
+  if (secret === EXAMPLE_SECRET) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "SESSION_SECRET is still the example value from .env.example. Generate a real one with: openssl rand -base64 32",
+      );
+    }
+    if (!warnedAboutExample) {
+      warnedAboutExample = true;
+      console.warn(
+        "⚠ SESSION_SECRET is the example value from .env.example. Fine for local testing, but set a real secret before deploying.",
+      );
+    }
   }
   return new TextEncoder().encode(secret);
 }

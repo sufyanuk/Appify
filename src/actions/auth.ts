@@ -13,6 +13,9 @@ import {
   type FormState,
 } from "@/lib/validation";
 
+/** The example password from .env.example / README. */
+const EXAMPLE_ADMIN_PASSWORD = "ChangeMe123!";
+
 export async function login(_prev: FormState, formData: FormData): Promise<FormState> {
   const parsed = loginSchema.safeParse({
     email: formData.get("email"),
@@ -50,6 +53,10 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
 
   resetRateLimit(limitKey);
   await createSession(admin.id, admin.tokenVersion);
+  // Nudge admins still using the documented example password to change it.
+  if (parsed.data.password === EXAMPLE_ADMIN_PASSWORD) {
+    redirect("/admin/settings?notice=default-password");
+  }
   redirect("/admin");
 }
 

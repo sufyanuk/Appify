@@ -71,7 +71,7 @@ All secrets stay on the server. Nothing is exposed to the browser (there are no 
 1. Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`. The example values are `admin@example.com` / `ChangeMe123!`.
 2. Run `npm run setup`, or `npm run admin:create`. This creates the admin with a bcrypt-hashed password.
 3. Open **http://localhost:3000/admin** and sign in. The site footer also has a "Staff login" link.
-4. Go to **Settings → Change password** to choose your own password.
+4. Choose your own password under **Settings → Change password**. If you sign in with the example password, the app takes you there automatically and shows a reminder.
 
 To add another admin or reset a forgotten password:
 
@@ -158,6 +158,7 @@ Design notes:
 - **Sessions** are httpOnly, `SameSite=Lax`, `Secure` in production and expire after 8 hours. Changing your password invalidates all other sessions.
 - **Order confirmation URLs** use an unguessable id, so customers can't browse each other's orders by changing `ORD-1024` to `ORD-1025`.
 - **Secrets** live only in environment variables, and `.env` is git-ignored.
+- **The example `SESSION_SECRET` from `.env.example` is refused in production.** It is public, so admin sign-in stays blocked until you set a real secret. In development it only logs a warning.
 
 ---
 
