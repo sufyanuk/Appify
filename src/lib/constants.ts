@@ -23,12 +23,16 @@ export type Difficulty = (typeof DIFFICULTIES)[number];
 
 /** Menu sections, in the order customers see them. */
 export const DEFAULT_CATEGORIES = [
+  "Ramadan Special",
+  "Eid Special",
   "Thali",
   "Seafood",
   "Chicken",
   "Vegetarian",
   "Snacks",
   "Sweets",
+  "Desserts",
+  "Soups",
   "Drinks",
 ];
 

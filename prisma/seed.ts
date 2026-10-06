@@ -127,6 +127,78 @@ const foodItems = [
   },
 ];
 
+/**
+ * Menu additions applied once each (tracked in the SeedRun table). Items whose
+ * name already exists are skipped, and deleting an item later won't bring it
+ * back on the next deploy.
+ */
+const R = "Ramadan Special";
+const MENU_PACKS: { id: string; items: typeof foodItems }[] = [
+  {
+    id: "ramadan-eid-menu-2026",
+    items: [
+      { name: "Veg Samosa (12 pcs)", description: "Crisp samosas with a spiced potato and peas filling.", priceCents: qar(30), category: R, image: commonsPhoto(PHOTOS.vegSamosa) },
+      { name: "Non-veg Samosa (12 pcs)", description: "Crisp samosas with a spiced minced-meat filling.", priceCents: qar(35), category: R, image: commonsPhoto(PHOTOS.nonVegSamosa) },
+      { name: "Dahi Vada (1 CNT)", description: "Soft lentil vadas in sweet yoghurt with tamarind chutney.", priceCents: qar(30), category: R, image: commonsPhoto(PHOTOS.dahiVada) },
+      { name: "Cutlets (12 pcs)", description: "Golden, crumb-coated spiced cutlets.", priceCents: qar(35), category: R, image: commonsPhoto(PHOTOS.cutlets) },
+      { name: "Vada Pav (6 pcs)", description: "Batata vada in soft pav with garlic and green chutney.", priceCents: qar(30), category: R, image: commonsPhoto(PHOTOS.vadaPav6) },
+      { name: "Box Patties (12 pcs)", description: "Flaky puff-pastry patties with a savoury filling.", priceCents: qar(45), category: R, image: commonsPhoto(PHOTOS.boxPatties) },
+      { name: "Beef Shami Kebab (12 pcs)", description: "Tender minced beef and chana dal kebabs, pan-fried.", priceCents: qar(45), category: R, image: commonsPhoto(PHOTOS.shamiKebab) },
+      { name: "Mutton Shami Kebab (12 pcs)", description: "Melt-in-the-mouth minced mutton and dal kebabs.", priceCents: qar(50), category: R, image: commonsPhoto(PHOTOS.muttonShamiKebab) },
+      { name: "Lagda (1 CNT)", description: "Spiced white peas curry, Mumbai style.", priceCents: qar(15), category: R, image: commonsPhoto(PHOTOS.lagda) },
+      { name: "Chana Masala (1 CNT)", description: "Chickpeas cooked in a rich onion-tomato masala.", priceCents: qar(15), category: R, image: commonsPhoto(PHOTOS.chanaMasala) },
+      { name: "Potato Chat (1 CNT)", description: "Tangy potato chaat with chutneys and spices.", priceCents: qar(15), category: R, image: commonsPhoto(PHOTOS.potatoChaat) },
+      { name: "Chicken Sandwiches (6 pcs)", description: "Soft sandwiches with creamy spiced chicken filling.", priceCents: qar(35), category: R, image: commonsPhoto(PHOTOS.chickenSandwich) },
+      { name: "Chicken Tandoor Samosa (12 pcs)", description: "Samosas filled with smoky tandoori chicken.", priceCents: qar(40), category: R, image: commonsPhoto(PHOTOS.tandoorSamosa) },
+      { name: "Cheese Samosa (12 pcs)", description: "Crisp samosas with a gooey cheese filling.", priceCents: qar(30), category: R, image: commonsPhoto(PHOTOS.cheeseSamosa) },
+      { name: "Keema Samosa (12 pcs)", description: "Samosas packed with spiced keema.", priceCents: qar(45), category: R, image: commonsPhoto(PHOTOS.keemaSamosa) },
+      { name: "Veg Spring Rolls (12 pcs)", description: "Crispy rolls with stir-fried vegetables.", priceCents: qar(40), category: R, image: commonsPhoto(PHOTOS.vegSpringRolls) },
+      { name: "Non-Veg Spring Rolls (12 pcs)", description: "Crispy rolls with a savoury meat filling.", priceCents: qar(40), category: R, image: commonsPhoto(PHOTOS.springRolls) },
+      { name: "Chicken Chinese Rolls (12 pcs)", description: "Indo-Chinese style crispy chicken rolls.", priceCents: qar(45), category: R, image: commonsPhoto(PHOTOS.springRolls) },
+      { name: "Gola Kebab (6 pcs)", description: "Soft, smoky minced-meat kebabs.", priceCents: qar(45), category: R, image: commonsPhoto(PHOTOS.golaKebab) },
+      { name: "Chicken Kofte (12 pcs)", description: "Spiced minced chicken kofte.", priceCents: qar(40), category: R, image: commonsPhoto(PHOTOS.chickenKofte) },
+      { name: "Mutton Kofte (12 pcs)", description: "Spiced minced mutton kofte.", priceCents: qar(55), category: R, image: commonsPhoto(PHOTOS.muttonKofte) },
+      { name: "Lagda Petis (6 pcs - 1 CNT)", description: "Potato patties served with spiced lagda (white peas curry).", priceCents: qar(30), category: R, image: commonsPhoto(PHOTOS.lagdaPetis) },
+      { name: "Chicken Buns (6 pcs)", description: "Soft buns stuffed with spiced chicken.", priceCents: qar(40), category: R, image: commonsPhoto(PHOTOS.chickenBuns) },
+      { name: "Tandoori Club Sandwiches (6 pcs)", description: "Layered club sandwiches with tandoori chicken.", priceCents: qar(35), category: R, image: commonsPhoto(PHOTOS.clubSandwich) },
+      { name: "Chicken Bread Rolls (12 pcs)", description: "Crisp bread rolls with spiced chicken filling.", priceCents: qar(45), category: R, image: commonsPhoto(PHOTOS.breadRolls) },
+      { name: "Chicken Russian Kebab (12 pcs)", description: "Creamy chicken kebabs, crumb-coated and fried.", priceCents: qar(45), category: R, image: commonsPhoto(PHOTOS.cutlets) },
+      { name: "Chapli Kebab (12 pcs)", description: "Flat Peshawari-style spiced minced-meat kebabs.", priceCents: qar(40), category: R, image: commonsPhoto(PHOTOS.chapliKebab) },
+      { name: "Nuggets (12 pcs)", description: "Crispy golden chicken nuggets.", priceCents: qar(40), category: R, image: commonsPhoto(PHOTOS.nuggets) },
+
+      { name: "Sandan (12 pcs)", description: "Soft, steamed Kokni rice cakes, lightly sweet with a saffron touch.", priceCents: qar(40), category: "Eid Special", image: "/images/sandan.jpg" },
+      { name: "Chicken Biryani", description: "Fragrant dum biryani with tender chicken.", priceCents: qar(105), category: "Eid Special", image: commonsPhoto(PHOTOS.chickenBiryani) },
+      { name: "Mutton Biryani", description: "Rich dum biryani with slow-cooked mutton.", priceCents: qar(140), category: "Eid Special", image: commonsPhoto(PHOTOS.muttonBiryani) },
+      { name: "Mutton Paaya", description: "Slow-cooked mutton trotters in a spiced broth.", priceCents: qar(95), category: "Eid Special", image: commonsPhoto(PHOTOS.paaya) },
+      { name: "Beef Paaya", description: "Slow-cooked beef trotters in a spiced broth.", priceCents: qar(85), category: "Eid Special", image: commonsPhoto(PHOTOS.paaya) },
+
+      { name: "Kheer", description: "Creamy rice pudding with cardamom and nuts.", priceCents: qar(35), category: "Desserts", image: commonsPhoto(PHOTOS.kheer) },
+      { name: "Biscuit Delight", description: "Layered biscuit and cream dessert.", priceCents: qar(40), category: "Desserts", image: commonsPhoto(PHOTOS.biscuitPudding) },
+      { name: "Ghawna (3 full pcs)", description: "Soft, lacy Kokni rice pancakes.", priceCents: qar(50), category: "Desserts", image: commonsPhoto(PHOTOS.ghawna) },
+      { name: "Dates Dessert", description: "A rich, sweet dessert made with dates.", priceCents: qar(40), category: "Desserts", image: "" },
+
+      { name: "Chicken Clear Soup", description: "Light, comforting chicken broth.", priceCents: qar(35), category: "Soups", image: commonsPhoto(PHOTOS.chickenClearSoup) },
+      { name: "Chinese Soup", description: "Hot and sour Indo-Chinese soup.", priceCents: qar(35), category: "Soups", image: commonsPhoto(PHOTOS.chineseSoup) },
+      { name: "Aalni Palni Soup", description: "Traditional spiced Kokni soup.", priceCents: qar(50), category: "Soups", image: commonsPhoto(PHOTOS.aalniPalniSoup) },
+      { name: "Seafood Creamy Soup", description: "Creamy soup loaded with seafood.", priceCents: qar(65), category: "Soups", image: commonsPhoto(PHOTOS.seafoodSoup) },
+      { name: "Mutton Soup", description: "Hearty mutton shorba with warming spices.", priceCents: qar(70), category: "Soups", image: commonsPhoto(PHOTOS.muttonSoup) },
+    ],
+  },
+];
+
+async function applyMenuPacks() {
+  for (const pack of MENU_PACKS) {
+    if (await db.seedRun.findUnique({ where: { id: pack.id } })) continue;
+    const existing = new Set((await db.foodItem.findMany({ select: { name: true } })).map((f) => f.name));
+    const toAdd = pack.items.filter((f) => !existing.has(f.name));
+    await db.$transaction([
+      db.foodItem.createMany({ data: toAdd }),
+      db.seedRun.create({ data: { id: pack.id } }),
+    ]);
+    console.log(`✔ Added ${toAdd.length} items from menu update "${pack.id}"`);
+  }
+}
+
 const recipes = [
   {
     name: "Solkadhi",
@@ -406,6 +478,8 @@ async function main() {
   } else {
     console.log("• Recipes already present — skipped");
   }
+
+  await applyMenuPacks();
 }
 
 main()

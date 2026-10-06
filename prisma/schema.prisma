@@ -32,20 +32,20 @@ model FoodItem {
 
 model Order {
   /// Internal sequential id — used to build the human readable order number.
-  id           Int         @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   /// Unguessable id used in the public confirmation URL.
-  publicId     String      @unique @default(cuid())
+  publicId      String      @unique @default(cuid())
   /// Human friendly number shown to customers, e.g. "ORD-1024".
-  orderNumber  String      @unique
-  customerName String      @default("")
-  customerPhone String     @default("")
-  notes        String      @default("")
-  totalCents   Int
+  orderNumber   String      @unique
+  customerName  String      @default("")
+  customerPhone String      @default("")
+  notes         String      @default("")
+  totalCents    Int
   /// One of: RECEIVED, PREPARING, READY, COMPLETED, CANCELLED
-  status       String      @default("RECEIVED")
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  items        OrderItem[]
+  status        String      @default("RECEIVED")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  items         OrderItem[]
 
   @@index([status])
   @@index([createdAt])
@@ -83,6 +83,13 @@ model Recipe {
   difficulty   String   @default("Easy")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+/// Records one-off data updates (e.g. a new menu) already applied by the
+/// seed, so they run once and never re-add items the admin has since deleted.
+model SeedRun {
+  id        String   @id
+  appliedAt DateTime @default(now())
 }
 
 model Admin {

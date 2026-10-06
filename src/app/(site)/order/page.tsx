@@ -16,6 +16,10 @@ export default async function OrderPage() {
         title="Order homemade food"
         description="Freshly cooked at home every day. Choose your dishes and quantities, then submit your order."
       />
+      <p className="mt-4 rounded-2xl bg-brand-50 px-4 py-3 text-sm text-brand-700">
+        <strong className="font-semibold">Please order at least 3 days in advance.</strong>{" "}
+        Pick-up &amp; drop-off available (charges apply).
+      </p>
       <div className="mt-6 sm:mt-8">
         {items.length === 0 ? (
           <EmptyState
