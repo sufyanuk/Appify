@@ -1,5 +1,11 @@
 import Link from "next/link";
 import { AdminHeader } from "@/components/admin/admin-header";
+import {
+  ChartCard,
+  OrdersByStatusChart,
+  RankedBars,
+  RevenueByDayChart,
+} from "@/components/admin/dashboard-charts";
 import { OrderItemsList } from "@/components/admin/order-row-items";
 import { StatusBadge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
@@ -62,7 +68,46 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="mt-8 grid gap-6 xl:grid-cols-[1fr_280px]">
+      <div className="mt-6 grid gap-4 lg:grid-cols-3 lg:gap-6">
+        <ChartCard
+          className="lg:col-span-2"
+          title="Revenue per day"
+          subtitle="Last 14 days · excludes cancelled orders · tap or hover a bar for details"
+          headline={
+            <div className="text-right">
+              <p className="text-xl font-semibold tabular-nums">
+                {formatPrice(stats.daily.reduce((s, d) => s + d.revenueCents, 0))}
+              </p>
+              <p className="text-xs text-muted">
+                {stats.daily.reduce((s, d) => s + d.orders, 0)} orders
+              </p>
+            </div>
+          }
+        >
+          <RevenueByDayChart data={stats.daily} />
+        </ChartCard>
+        <ChartCard title="Orders by status" subtitle="All orders">
+          <OrdersByStatusChart counts={stats.statusCounts} />
+        </ChartCard>
+        <ChartCard className="lg:col-span-1" title="Top dishes" subtitle="Quantity sold · last 30 days">
+          <RankedBars
+            rows={stats.topItems}
+            formatValue={(v) => `${v} sold`}
+            formatSecondary={(v) => formatPrice(v)}
+            emptyText="No dishes sold in the last 30 days."
+          />
+        </ChartCard>
+        <ChartCard className="lg:col-span-2" title="Sales by category" subtitle="Revenue · last 30 days">
+          <RankedBars
+            rows={stats.categorySales}
+            formatValue={(v) => formatPrice(v)}
+            formatSecondary={(v) => `${v} items`}
+            emptyText="No sales in the last 30 days."
+          />
+        </ChartCard>
+      </div>
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_280px]">
         <section className="rounded-2xl bg-white shadow-card ring-1 ring-line/60">
           <div className="flex items-center justify-between border-b border-line px-5 py-4">
             <h2 className="font-semibold">Recent orders</h2>

@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Add food item" };
 
 export default async function NewFoodPage() {
   await requireAdmin();
-  const categories = [...new Set([...(await getFoodCategories()), ...DEFAULT_CATEGORIES])];
+  const categories = [...new Set([...DEFAULT_CATEGORIES, ...(await getFoodCategories())])];
 
   return (
     <>

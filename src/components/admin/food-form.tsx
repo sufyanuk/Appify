@@ -5,6 +5,7 @@ import type { FoodItem } from "@prisma/client";
 import { Field, FormMessage, Input, Textarea, errorProps } from "@/components/ui/field";
 import { centsToInput } from "@/lib/format";
 import type { FormState } from "@/lib/validation";
+import { CategoryField } from "./category-field";
 import { FormActions } from "./form-actions";
 import { ImageUrlField } from "./image-url-field";
 
@@ -61,21 +62,11 @@ export function FoodForm({
         </Field>
 
         <Field label="Category" htmlFor="category" errors={errors.category}>
-          <Input
-            id="category"
-            name="category"
-            list="category-options"
-            required
-            maxLength={50}
+          <CategoryField
+            categories={categories}
             defaultValue={v("category", item?.category ?? "")}
-            placeholder="e.g. Seafood"
-            {...errorProps("category", errors.category)}
+            errors={errors.category}
           />
-          <datalist id="category-options">
-            {categories.map((c) => (
-              <option key={c} value={c} />
-            ))}
-          </datalist>
         </Field>
       </div>
 

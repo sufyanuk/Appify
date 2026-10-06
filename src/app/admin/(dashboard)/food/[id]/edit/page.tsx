@@ -15,7 +15,7 @@ export default async function EditFoodPage({ params }: PageProps<"/admin/food/[i
   const { id } = await params;
   const [item, existing] = await Promise.all([getFoodItem(id), getFoodCategories()]);
   if (!item) notFound();
-  const categories = [...new Set([...existing, ...DEFAULT_CATEGORIES])];
+  const categories = [...new Set([...DEFAULT_CATEGORIES, ...existing])];
 
   return (
     <>
