@@ -17,70 +17,70 @@ const foodItems = [
     name: "Malvani Fish Thali",
     description: "Pomfret fry, Malvani fish curry, solkadhi, rice and bhakri.",
     priceCents: qar(45),
-    category: "Thali",
+    category: "Rice Items",
     image: commonsPhoto(PHOTOS.fishThali),
   },
   {
     name: "Malvani Chicken Thali",
     description: "Chicken sukka, chicken curry, solkadhi, chapati, rice, chutney and pickle.",
     priceCents: qar(38),
-    category: "Thali",
+    category: "Rice Items",
     image: commonsPhoto(PHOTOS.chickenThali),
   },
   {
     name: "Surmai Fry",
     description: "Kingfish steaks in a spicy Malvani masala, shallow-fried in a rava crust.",
     priceCents: qar(40),
-    category: "Seafood",
+    category: "Signature Items",
     image: commonsPhoto(PHOTOS.surmaiFry),
   },
   {
     name: "Surmai Fry with Kolambi Curry",
     description: "Crispy surmai fry served with a rich coconut prawn curry.",
     priceCents: qar(48),
-    category: "Seafood",
+    category: "Signature Items",
     image: commonsPhoto(PHOTOS.surmaiPrawnCurry),
   },
   {
     name: "Bangda Curry Plate",
     description: "Mackerel in a tangy kokum and coconut curry, served with rice.",
     priceCents: qar(30),
-    category: "Seafood",
+    category: "Rice Items",
     image: commonsPhoto(PHOTOS.bangdaCurry),
   },
   {
     name: "Bombil Fry",
     description: "Crispy rava-fried Bombay duck — a Konkan coast favourite.",
     priceCents: qar(28),
-    category: "Seafood",
+    category: "Signature Items",
     image: commonsPhoto(PHOTOS.bombilFry),
   },
   {
     name: "Fish Koliwada",
     description: "Koli-style spicy fried fish bites with lemon and onion.",
     priceCents: qar(32),
-    category: "Seafood",
+    category: "Signature Items",
     image: commonsPhoto(PHOTOS.fishKoliwada),
   },
   {
     name: "Kombdi Vade",
     description: "Malvani chicken curry with soft, puffed vade made from rice and urad flour.",
     priceCents: qar(35),
-    category: "Chicken",
+    category: "Signature Items",
     image: commonsPhoto(PHOTOS.kombdiVade),
   },
   {
     name: "Pithla Bhakri",
     description: "Comforting besan pithla with bhakri, onion and green chilli.",
     priceCents: qar(18),
-    category: "Vegetarian",
+    category: "Signature Items",
     image: commonsPhoto(PHOTOS.pithlaBhakri),
   },
   {
     name: "Misal Pav",
     description: "Spicy sprouted-moth usal topped with farsan, onion and lemon, with pav.",
     priceCents: qar(18),
-    category: "Vegetarian",
+    category: "Snacks",
     image: commonsPhoto(PHOTOS.misalPav),
   },
   {
@@ -101,28 +101,28 @@ const foodItems = [
     name: "Ukadiche Modak (4 pcs)",
     description: "Steamed rice-flour modak filled with coconut and jaggery.",
     priceCents: qar(20),
-    category: "Sweets",
+    category: "Desserts",
     image: commonsPhoto(PHOTOS.modak),
   },
   {
     name: "Aamras Puran Poli",
     description: "Sweet Alphonso mango pulp with soft puran poli (seasonal).",
     priceCents: qar(22),
-    category: "Sweets",
+    category: "Desserts",
     image: commonsPhoto(PHOTOS.aamrasPuranPoli),
   },
   {
     name: "Solkadhi",
     description: "Cooling kokum and coconut milk drink — the perfect end to a Kokni meal.",
     priceCents: qar(8),
-    category: "Drinks",
+    category: "Signature Items",
     image: commonsPhoto(PHOTOS.solkadhi),
   },
   {
     name: "Kokum Sharbat",
     description: "Sweet and tangy kokum cooler, served chilled.",
     priceCents: qar(7),
-    category: "Drinks",
+    category: "Signature Items",
     image: commonsPhoto(PHOTOS.kokumSharbat),
   },
 ];
@@ -132,7 +132,7 @@ const foodItems = [
  * name already exists are skipped, and deleting an item later won't bring it
  * back on the next deploy.
  */
-const R = "Ramadan Special";
+const R = "Snacks";
 const MENU_PACKS: { id: string; items: typeof foodItems }[] = [
   {
     id: "ramadan-eid-menu-2026",
@@ -166,11 +166,11 @@ const MENU_PACKS: { id: string; items: typeof foodItems }[] = [
       { name: "Chapli Kebab (12 pcs)", description: "Flat Peshawari-style spiced minced-meat kebabs.", priceCents: qar(40), category: R, image: commonsPhoto(PHOTOS.chapliKebab) },
       { name: "Nuggets (12 pcs)", description: "Crispy golden chicken nuggets.", priceCents: qar(40), category: R, image: commonsPhoto(PHOTOS.nuggets) },
 
-      { name: "Sandan (12 pcs)", description: "Soft, steamed Kokni rice cakes, lightly sweet with a saffron touch.", priceCents: qar(40), category: "Eid Special", image: "/images/sandan.jpg" },
-      { name: "Chicken Biryani", description: "Fragrant dum biryani with tender chicken.", priceCents: qar(105), category: "Eid Special", image: commonsPhoto(PHOTOS.chickenBiryani) },
-      { name: "Mutton Biryani", description: "Rich dum biryani with slow-cooked mutton.", priceCents: qar(140), category: "Eid Special", image: commonsPhoto(PHOTOS.muttonBiryani) },
-      { name: "Mutton Paaya", description: "Slow-cooked mutton trotters in a spiced broth.", priceCents: qar(95), category: "Eid Special", image: commonsPhoto(PHOTOS.paaya) },
-      { name: "Beef Paaya", description: "Slow-cooked beef trotters in a spiced broth.", priceCents: qar(85), category: "Eid Special", image: commonsPhoto(PHOTOS.paaya) },
+      { name: "Sandan (12 pcs)", description: "Soft, steamed Kokni rice cakes, lightly sweet with a saffron touch.", priceCents: qar(40), category: "Signature Items", image: "/images/sandan.jpg" },
+      { name: "Chicken Biryani", description: "Fragrant dum biryani with tender chicken.", priceCents: qar(105), category: "Rice Items", image: commonsPhoto(PHOTOS.chickenBiryani) },
+      { name: "Mutton Biryani", description: "Rich dum biryani with slow-cooked mutton.", priceCents: qar(140), category: "Rice Items", image: commonsPhoto(PHOTOS.muttonBiryani) },
+      { name: "Mutton Paaya", description: "Slow-cooked mutton trotters in a spiced broth.", priceCents: qar(95), category: "Signature Items", image: commonsPhoto(PHOTOS.paaya) },
+      { name: "Beef Paaya", description: "Slow-cooked beef trotters in a spiced broth.", priceCents: qar(85), category: "Signature Items", image: commonsPhoto(PHOTOS.paaya) },
 
       { name: "Kheer", description: "Creamy rice pudding with cardamom and nuts.", priceCents: qar(35), category: "Desserts", image: commonsPhoto(PHOTOS.kheer) },
       { name: "Biscuit Delight", description: "Layered biscuit and cream dessert.", priceCents: qar(40), category: "Desserts", image: commonsPhoto(PHOTOS.biscuitPudding) },
@@ -197,6 +197,53 @@ async function applyMenuPacks() {
     ]);
     console.log(`✔ Added ${toAdd.length} items from menu update "${pack.id}"`);
   }
+}
+
+/** Menu sections as of Oct 2026, applied once to databases seeded earlier. */
+const CATEGORY_UPDATE_ID = "menu-categories-2026-10";
+const OLD_TO_NEW_CATEGORY: Record<string, string> = {
+  "Ramadan Special": "Snacks",
+  Sweets: "Desserts",
+};
+const CATEGORY_BY_NAME: Record<string, string> = {
+  "Malvani Fish Thali": "Rice Items",
+  "Malvani Chicken Thali": "Rice Items",
+  "Bangda Curry Plate": "Rice Items",
+  "Chicken Biryani": "Rice Items",
+  "Mutton Biryani": "Rice Items",
+  "Surmai Fry": "Signature Items",
+  "Surmai Fry with Kolambi Curry": "Signature Items",
+  "Bombil Fry": "Signature Items",
+  "Fish Koliwada": "Signature Items",
+  "Kombdi Vade": "Signature Items",
+  "Pithla Bhakri": "Signature Items",
+  "Sandan (12 pcs)": "Signature Items",
+  "Mutton Paaya": "Signature Items",
+  "Beef Paaya": "Signature Items",
+  "Solkadhi": "Signature Items",
+  "Kokum Sharbat": "Signature Items",
+  "Misal Pav": "Snacks",
+  "Vada Pav (2 pcs)": "Snacks",
+  "Sabudana Vada (4 pcs)": "Snacks",
+  "Ukadiche Modak (4 pcs)": "Desserts",
+  "Aamras Puran Poli": "Desserts",
+};
+
+async function applyCategoryUpdate() {
+  if (await db.seedRun.findUnique({ where: { id: CATEGORY_UPDATE_ID } })) return;
+  const ops = [
+    ...Object.entries(CATEGORY_BY_NAME).map(([name, category]) =>
+      db.foodItem.updateMany({ where: { name }, data: { category } }),
+    ),
+    ...Object.entries(OLD_TO_NEW_CATEGORY).map(([from, category]) =>
+      db.foodItem.updateMany({
+        where: { category: from, name: { notIn: Object.keys(CATEGORY_BY_NAME) } },
+        data: { category },
+      }),
+    ),
+  ];
+  await db.$transaction([...ops, db.seedRun.create({ data: { id: CATEGORY_UPDATE_ID } })]);
+  console.log("✔ Moved menu items into the new sections");
 }
 
 const recipes = [
@@ -480,6 +527,7 @@ async function main() {
   }
 
   await applyMenuPacks();
+  await applyCategoryUpdate();
 }
 
 main()
