@@ -43,6 +43,10 @@ export const PHOTOS = {
   solkadhi: "Solkadi-Konkani-Home.jpg",
   kokumSharbat: "Garcinia indica red and yellow kokum drinks prepared from syrups.jpg",
 
+  // Home page (high resolution originals)
+  homeVadaPav: "Vada Pav-Indian street food.JPG",
+  homeBiryani: "Chicken Biryani from the streets of Hyderabad.JPG",
+
   // Ramadan & Eid menu
   vegSamosa: "Samosa (Home Made) or Singara.jpg",
   nonVegSamosa: "Samosa with tamarind chutney and tomato sauce.jpg",
@@ -84,6 +88,8 @@ export const PHOTOS = {
 } as const;
 
 export const PHOTO_CREDITS: { dish: string; file: string }[] = [
+  { dish: "Home page: Vada Pav", file: PHOTOS.homeVadaPav },
+  { dish: "Home page: Chicken Biryani", file: PHOTOS.homeBiryani },
   { dish: "Malvani Fish Thali", file: PHOTOS.fishThali },
   { dish: "Malvani Chicken Thali", file: PHOTOS.chickenThali },
   { dish: "Surmai Fry", file: PHOTOS.surmaiFry },

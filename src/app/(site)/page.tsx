@@ -8,14 +8,14 @@ const choices = [
     href: "/recipes",
     title: "Browse Easy Recipes",
     text: "Simple Kokni dishes to cook in your own kitchen.",
-    image: commonsPhoto(PHOTOS.modakPuneri, 1200),
+    image: commonsPhoto(PHOTOS.homeVadaPav, 1600),
     icon: BookIcon,
   },
   {
     href: "/order",
     title: "Order Food Items",
     text: "Fresh homemade thalis, seafood, vade and more.",
-    image: commonsPhoto(PHOTOS.chickenThali, 1200),
+    image: commonsPhoto(PHOTOS.homeBiryani, 1600),
     icon: BagIcon,
   },
 ];

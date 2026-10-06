@@ -4,6 +4,7 @@
  * empty tables, so your own edits are never overwritten)
  */
 import { PrismaClient } from "@prisma/client";
+import { createHash } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { PHOTOS, commonsPhoto } from "../src/lib/photos";
 
@@ -228,6 +229,36 @@ const CATEGORY_BY_NAME: Record<string, string> = {
   "Ukadiche Modak (4 pcs)": "Desserts",
   "Aamras Puran Poli": "Desserts",
 };
+
+/** Any item still in a retired section is moved into the current five. */
+const CLEANUP_ID = "menu-categories-cleanup-2026-10b";
+const RETIRED_CATEGORY: Record<string, string> = {
+  "Eid Special": "Signature Items",
+  "Ramadan Special": "Snacks",
+  Thali: "Rice Items",
+  Seafood: "Signature Items",
+  Chicken: "Signature Items",
+  Vegetarian: "Signature Items",
+  Drinks: "Signature Items",
+  Sweets: "Desserts",
+};
+
+async function retireOldCategories() {
+  if (await db.seedRun.findUnique({ where: { id: CLEANUP_ID } })) return;
+  const ops = [
+    // Biryanis belong with rice, wherever they were.
+    db.foodItem.updateMany({
+      where: { name: { contains: "biryani", mode: "insensitive" }, category: { in: Object.keys(RETIRED_CATEGORY) } },
+      data: { category: "Rice Items" },
+    }),
+    ...Object.entries(RETIRED_CATEGORY).map(([from, category]) =>
+      db.foodItem.updateMany({ where: { category: from }, data: { category } }),
+    ),
+  ];
+  const results = await db.$transaction([...ops, db.seedRun.create({ data: { id: CLEANUP_ID } })]);
+  const moved = results.slice(0, ops.length).reduce((n, r) => n + (r as { count: number }).count, 0);
+  console.log(`✔ Retired old menu sections (moved ${moved} items)`);
+}
 
 async function applyCategoryUpdate() {
   if (await db.seedRun.findUnique({ where: { id: CATEGORY_UPDATE_ID } })) return;
@@ -494,6 +525,23 @@ async function main() {
         data: { email, passwordHash: await bcrypt.hash(password, 12) },
       });
       console.log(`✔ Created admin ${email}`);
+    } else if (process.env.ADMIN_RESET_PASSWORD === "true") {
+      // One-off reset to ADMIN_PASSWORD. Recorded per (email, password) so a
+      // password the admin later changes in Settings isn't overwritten again.
+      const runId = `admin-password-reset:${createHash("sha256").update(`${email}\n${password}`).digest("hex").slice(0, 16)}`;
+      if (!(await db.seedRun.findUnique({ where: { id: runId } }))) {
+        await db.$transaction([
+          db.admin.update({
+            where: { id: existing.id },
+            // Bumping tokenVersion signs out every existing session.
+            data: { passwordHash: await bcrypt.hash(password, 12), tokenVersion: { increment: 1 } },
+          }),
+          db.seedRun.create({ data: { id: runId } }),
+        ]);
+        console.log(`✔ Reset the password for admin ${email}`);
+      } else {
+        console.log(`• Admin ${email} password reset already applied`);
+      }
     } else {
       console.log(`• Admin ${email} already exists (password unchanged)`);
     }
@@ -528,6 +576,7 @@ async function main() {
 
   await applyMenuPacks();
   await applyCategoryUpdate();
+  await retireOldCategories();
 }
 
 main()

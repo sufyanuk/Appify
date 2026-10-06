@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { AdminHeader } from "@/components/admin/admin-header";
-import {
-  ChartCard,
-  OrdersByStatusChart,
-  RankedBars,
-  RevenueByDayChart,
-} from "@/components/admin/dashboard-charts";
+import { ChartCard, KpiTile, RankedBars } from "@/components/admin/dashboard-charts";
+import { CustomersTrend, MonthlyTrend } from "@/components/admin/dashboard-monthly";
 import { OrderItemsList } from "@/components/admin/order-row-items";
 import { StatusBadge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
@@ -26,12 +22,9 @@ export default async function DashboardPage() {
   const admin = await requireAdmin();
   const stats = await getDashboardStats();
 
-  const cards = [
-    { label: "Total orders", value: stats.totalOrders, href: "/admin/orders" },
-    { label: "Pending orders", value: stats.pendingOrders, href: "/admin/orders?status=pending", highlight: stats.pendingOrders > 0 },
-    { label: "Available food items", value: `${stats.availableItems} / ${stats.totalItems}`, href: "/admin/food" },
-    { label: "Revenue (excl. cancelled)", value: formatPrice(stats.revenueCents), href: "/admin/orders" },
-  ];
+  const { kpis, months } = stats;
+  const last6 = months.slice(-6);
+  const monthName = months[11].label;
 
   const quickLinks = [
     { href: "/admin/food/new", label: "Add food item", icon: PlusIcon },
@@ -45,7 +38,7 @@ export default async function DashboardPage() {
     <>
       <AdminHeader
         title={`Welcome back${admin.name && admin.name !== "Admin" ? `, ${admin.name}` : ""}`}
-        description="Here's what's happening today."
+        description="Your kitchen at a glance: monthly sales, orders and customers."
         action={
           <ButtonLink href="/admin/food/new">
             <PlusIcon width={18} height={18} /> Add food item
@@ -53,56 +46,84 @@ export default async function DashboardPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
-        {cards.map((c) => (
+      {/* Month-to-date KPIs */}
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
+          {monthName} · month to date
+        </h2>
+        <div className="flex flex-wrap gap-2 text-sm">
           <Link
-            key={c.label}
-            href={c.href}
-            className="rounded-2xl bg-white p-4 shadow-card ring-1 ring-line/60 transition hover:ring-ink/20 sm:p-5"
+            href="/admin/orders?status=pending"
+            className={`rounded-full px-3 py-1 font-medium ring-1 ${stats.pendingOrders > 0 ? "bg-brand-50 text-brand-700 ring-brand-200" : "bg-white text-muted ring-line"}`}
           >
-            <p className="text-xs font-medium text-muted sm:text-sm">{c.label}</p>
-            <p className={`mt-2 text-2xl font-semibold tabular-nums sm:text-3xl ${c.highlight ? "text-brand-600" : ""}`}>
-              {c.value}
-            </p>
+            {stats.pendingOrders} pending order{stats.pendingOrders === 1 ? "" : "s"}
           </Link>
-        ))}
+          <Link href="/admin/food" className="rounded-full bg-white px-3 py-1 font-medium text-muted ring-1 ring-line">
+            {stats.availableItems}/{stats.totalItems} dishes available
+          </Link>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+        <KpiTile
+          label="Revenue"
+          value={formatPrice(kpis.revenue.current)}
+          current={kpis.revenue.current}
+          previous={kpis.revenue.previous}
+          trend={last6.map((m) => m.revenueCents)}
+        />
+        <KpiTile
+          label="Orders"
+          value={String(kpis.orders.current)}
+          current={kpis.orders.current}
+          previous={kpis.orders.previous}
+          trend={last6.map((m) => m.orders)}
+          href="/admin/orders"
+        />
+        <KpiTile
+          label="Customers"
+          value={String(kpis.customers.current)}
+          current={kpis.customers.current}
+          previous={kpis.customers.previous}
+          trend={last6.map((m) => m.customers)}
+        />
+        <KpiTile
+          label="Average order"
+          value={formatPrice(kpis.avgOrder.current)}
+          current={kpis.avgOrder.current}
+          previous={kpis.avgOrder.previous}
+          trend={last6.map((m) => m.avgOrderCents)}
+        />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3 lg:gap-6">
         <ChartCard
-          className="lg:col-span-2"
-          title="Revenue per day"
-          subtitle="Last 14 days · excludes cancelled orders · tap or hover a bar for details"
-          headline={
-            <div className="text-right">
-              <p className="text-xl font-semibold tabular-nums">
-                {formatPrice(stats.daily.reduce((s, d) => s + d.revenueCents, 0))}
-              </p>
-              <p className="text-xs text-muted">
-                {stats.daily.reduce((s, d) => s + d.orders, 0)} orders
-              </p>
-            </div>
-          }
+          className="lg:col-span-3"
+          title="Monthly performance"
+          subtitle="Excludes cancelled orders · current month is month to date (dashed) · hover, tap or use ← → for details"
         >
-          <RevenueByDayChart data={stats.daily} />
+          <MonthlyTrend months={months} />
         </ChartCard>
-        <ChartCard title="Orders by status" subtitle="All orders">
-          <OrdersByStatusChart counts={stats.statusCounts} />
+        <ChartCard
+          className="lg:col-span-2"
+          title="Customers per month"
+          subtitle={`New vs returning · ${stats.totalCustomers} customers in total · current month is month to date`}
+        >
+          <CustomersTrend months={months} />
         </ChartCard>
-        <ChartCard className="lg:col-span-1" title="Top dishes" subtitle="Quantity sold · last 30 days">
+        <ChartCard title="Top dishes" subtitle="Quantity sold · last 90 days">
           <RankedBars
             rows={stats.topItems}
             formatValue={(v) => `${v} sold`}
             formatSecondary={(v) => formatPrice(v)}
-            emptyText="No dishes sold in the last 30 days."
+            emptyText="No dishes sold in the last 90 days."
           />
         </ChartCard>
-        <ChartCard className="lg:col-span-2" title="Sales by category" subtitle="Revenue · last 30 days">
+        <ChartCard className="lg:col-span-3" title="Sales by category" subtitle="Revenue · last 90 days">
           <RankedBars
             rows={stats.categorySales}
             formatValue={(v) => formatPrice(v)}
             formatSecondary={(v) => `${v} items`}
-            emptyText="No sales in the last 30 days."
+            emptyText="No sales in the last 90 days."
           />
         </ChartCard>
       </div>

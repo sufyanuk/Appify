@@ -33,74 +33,139 @@ export async function getOrders(filter?: OrderStatus | "pending") {
 export type OrderWithItems = Awaited<ReturnType<typeof getOrders>>[number];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-/** Calendar day in Qatar time, e.g. "2026-10-06". */
-const qatarDay = (d: Date) =>
+/** Calendar date in Qatar time, e.g. "2026-10-06". */
+const qatarDate = (d: Date) =>
   new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Qatar" }).format(d);
 
-export type DailyPoint = { day: string; revenueCents: number; orders: number };
+export type MonthPoint = {
+  month: string; // "2026-10"
+  label: string; // "Oct 2026"
+  short: string; // "Oct"
+  revenueCents: number;
+  orders: number;
+  customers: number;
+  newCustomers: number;
+  returningCustomers: number;
+  avgOrderCents: number;
+};
+export type Kpi = { current: number; previous: number };
 export type RankedRow = { label: string; value: number; secondary: number };
+
+/** A stable key for "the same customer": phone digits, else name. */
+function customerKey(o: { id: number; customerPhone: string; customerName: string }) {
+  const digits = o.customerPhone.replace(/\D/g, "");
+  if (digits.length >= 7) return `p:${digits.slice(-8)}`;
+  const name = o.customerName.trim().toLowerCase();
+  return name ? `n:${name}` : `o:${o.id}`;
+}
+
+function monthLabel(month: string, opts: Intl.DateTimeFormatOptions) {
+  return new Intl.DateTimeFormat("en-GB", { ...opts, timeZone: "UTC" }).format(new Date(`${month}-01T00:00:00Z`));
+}
 
 export async function getDashboardStats() {
   await connection();
   const now = new Date();
-  const since14 = new Date(now.getTime() - 14 * DAY_MS);
-  const since30 = new Date(now.getTime() - 30 * DAY_MS);
+  const since90 = new Date(now.getTime() - 90 * DAY_MS);
   const notCancelled = { status: { not: "CANCELLED" } };
 
-  const [
-    totalOrders,
-    pendingOrders,
-    availableItems,
-    totalItems,
-    recipes,
-    revenue,
-    recentOrders,
-    recent14,
-    statusGroups,
-    topItemGroups,
-    categoryLines,
-  ] = await Promise.all([
-    db.order.count(),
-    db.order.count({ where: { status: { in: PENDING_STATUSES } } }),
-    db.foodItem.count({ where: { available: true } }),
-    db.foodItem.count(),
-    db.recipe.count(),
-    db.order.aggregate({ _sum: { totalCents: true }, where: notCancelled }),
-    db.order.findMany({ orderBy: { createdAt: "desc" }, take: 5, include: withItems }),
-    db.order.findMany({
-      where: { ...notCancelled, createdAt: { gte: since14 } },
-      select: { createdAt: true, totalCents: true },
-    }),
-    db.order.groupBy({ by: ["status"], _count: { _all: true } }),
-    db.orderItem.groupBy({
-      by: ["name"],
-      where: { order: { ...notCancelled, createdAt: { gte: since30 } } },
-      _sum: { quantity: true, lineTotalCents: true },
-      orderBy: { _sum: { quantity: "desc" } },
-      take: 6,
-    }),
-    db.orderItem.findMany({
-      where: { order: { ...notCancelled, createdAt: { gte: since30 } } },
-      select: { lineTotalCents: true, quantity: true, foodItem: { select: { category: true } } },
-      take: 5000,
-    }),
-  ]);
+  const [pendingOrders, availableItems, totalItems, recentOrders, allOrders, topItemGroups, categoryLines] =
+    await Promise.all([
+      db.order.count({ where: { status: { in: PENDING_STATUSES } } }),
+      db.foodItem.count({ where: { available: true } }),
+      db.foodItem.count(),
+      db.order.findMany({ orderBy: { createdAt: "desc" }, take: 6, include: withItems }),
+      db.order.findMany({
+        where: notCancelled,
+        select: { id: true, createdAt: true, totalCents: true, customerPhone: true, customerName: true },
+        orderBy: { createdAt: "asc" },
+        take: 50000,
+      }),
+      db.orderItem.groupBy({
+        by: ["name"],
+        where: { order: { ...notCancelled, createdAt: { gte: since90 } } },
+        _sum: { quantity: true, lineTotalCents: true },
+        orderBy: { _sum: { quantity: "desc" } },
+        take: 6,
+      }),
+      db.orderItem.findMany({
+        where: { order: { ...notCancelled, createdAt: { gte: since90 } } },
+        select: { lineTotalCents: true, quantity: true, foodItem: { select: { category: true } } },
+        take: 20000,
+      }),
+    ]);
 
-  // Revenue per day for the last 14 days (Qatar time), including empty days.
-  const byDay = new Map<string, DailyPoint>();
-  for (let i = 13; i >= 0; i--) {
-    const day = qatarDay(new Date(now.getTime() - i * DAY_MS));
-    byDay.set(day, { day, revenueCents: 0, orders: 0 });
+  // --- Last 12 months (Qatar time), oldest first, including empty months.
+  const today = qatarDate(now);
+  const [ty, tm] = today.split("-").map(Number);
+  const months: MonthPoint[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(Date.UTC(ty, tm - 1 - i, 1));
+    const month = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    months.push({
+      month,
+      label: monthLabel(month, { month: "short", year: "numeric" }),
+      short: monthLabel(month, { month: "short" }),
+      revenueCents: 0,
+      orders: 0,
+      customers: 0,
+      newCustomers: 0,
+      returningCustomers: 0,
+      avgOrderCents: 0,
+    });
   }
-  for (const o of recent14) {
-    const point = byDay.get(qatarDay(o.createdAt));
+  const byMonth = new Map(months.map((m) => [m.month, m]));
+  const firstMonthOf = new Map<string, string>(); // customer -> first order month (all time)
+  const seenInMonth = new Map<string, Set<string>>();
+
+  // Month-to-date vs the same days of last month.
+  const thisMonth = months[11].month;
+  const lastMonth = months[10].month;
+  const dayOfMonth = Number(today.slice(8, 10));
+  const mtd = { revenue: 0, orders: 0, customers: new Set<string>() };
+  const prev = { revenue: 0, orders: 0, customers: new Set<string>() };
+
+  for (const o of allOrders) {
+    const date = qatarDate(o.createdAt);
+    const month = date.slice(0, 7);
+    const key = customerKey(o);
+    if (!firstMonthOf.has(key)) firstMonthOf.set(key, month);
+
+    const point = byMonth.get(month);
     if (point) {
       point.revenueCents += o.totalCents;
       point.orders += 1;
+      const seen = seenInMonth.get(month) ?? new Set<string>();
+      if (!seen.has(key)) {
+        seen.add(key);
+        point.customers += 1;
+        if (firstMonthOf.get(key) === month) point.newCustomers += 1;
+        else point.returningCustomers += 1;
+      }
+      seenInMonth.set(month, seen);
+    }
+
+    const day = Number(date.slice(8, 10));
+    if (day <= dayOfMonth) {
+      const bucket = month === thisMonth ? mtd : month === lastMonth ? prev : null;
+      if (bucket) {
+        bucket.revenue += o.totalCents;
+        bucket.orders += 1;
+        bucket.customers.add(key);
+      }
     }
   }
+  for (const m of months) m.avgOrderCents = m.orders ? Math.round(m.revenueCents / m.orders) : 0;
 
-  const statusCounts = Object.fromEntries(statusGroups.map((g) => [g.status, g._count._all]));
+  const kpis = {
+    revenue: { current: mtd.revenue, previous: prev.revenue } satisfies Kpi,
+    orders: { current: mtd.orders, previous: prev.orders } satisfies Kpi,
+    customers: { current: mtd.customers.size, previous: prev.customers.size } satisfies Kpi,
+    avgOrder: {
+      current: mtd.orders ? Math.round(mtd.revenue / mtd.orders) : 0,
+      previous: prev.orders ? Math.round(prev.revenue / prev.orders) : 0,
+    } satisfies Kpi,
+  };
 
   const topItems: RankedRow[] = topItemGroups.map((g) => ({
     label: g.name,
@@ -118,15 +183,14 @@ export async function getDashboardStats() {
   }
 
   return {
-    totalOrders,
     pendingOrders,
     availableItems,
     totalItems,
-    recipes,
-    revenueCents: revenue._sum.totalCents ?? 0,
+    totalCustomers: firstMonthOf.size,
     recentOrders,
-    daily: [...byDay.values()],
-    statusCounts: statusCounts as Partial<Record<string, number>>,
+    months,
+    kpis,
+    dayOfMonth,
     topItems,
     categorySales: [...byCategory.values()].sort((a, b) => b.value - a.value),
   };
