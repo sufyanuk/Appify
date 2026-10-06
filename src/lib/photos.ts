@@ -36,6 +36,11 @@ export const PHOTOS = {
   solkadhi: "Solkadi-Konkani-Home.jpg",
   kokumSharbat: "Garcinia indica red and yellow kokum drinks prepared from syrups.jpg",
 
+  // Recipes added Oct 2026
+  taak: "Buttermilk and lassi.jpg",
+  vadaPavRecipe: "VadaPaav.JPG",
+  virginMojito: "Drinks - Virgin Mojito, Orange Juice.jpg",
+
   // Home page (high resolution originals)
   homeVadaPav: "Vada Pav-Indian street food.JPG",
   homeBiryani: "Chicken Biryani from the streets of Hyderabad.JPG",

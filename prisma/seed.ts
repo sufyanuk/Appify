@@ -428,6 +428,135 @@ const recipes = [
   },
 ];
 
+/** Recipe additions applied once each (tracked in SeedRun), like MENU_PACKS. */
+const RECIPE_PACKS: { id: string; recipes: typeof recipes }[] = [
+  {
+    id: "recipes-2026-10-taak-vadapav-saravle-mojito",
+    recipes: [
+      {
+        name: "Masala Taak",
+        description: "Cool, spiced Maharashtrian buttermilk — perfect with a spicy Kokni meal.",
+        image: commonsPhoto(PHOTOS.taak),
+        cookingTime: 10,
+        servings: 3,
+        difficulty: "Easy",
+        ingredients: [
+          "1 cup thick plain yoghurt (dahi)",
+          "2 cups chilled water",
+          "1/2 tsp roasted cumin powder",
+          "1 green chilli, very finely chopped",
+          "1/2 tsp grated ginger",
+          "2 tbsp chopped coriander leaves",
+          "Black salt and regular salt to taste",
+          "Optional tadka: 1 tsp ghee, 1/4 tsp mustard seeds, 4–5 curry leaves",
+        ],
+        instructions: [
+          "Whisk the yoghurt until smooth, then whisk in the chilled water until light and frothy.",
+          "Add the roasted cumin, green chilli, ginger, coriander, black salt and salt. Mix well.",
+          "For the optional tadka, heat the ghee, add mustard seeds and curry leaves, let them splutter and pour over the taak.",
+          "Chill for 10 minutes and serve in tall glasses.",
+        ],
+      },
+      {
+        name: "Vada Pav",
+        description: "Mumbai's favourite — spiced potato vada in besan batter, tucked into soft pav with chutneys.",
+        image: commonsPhoto(PHOTOS.vadaPavRecipe),
+        cookingTime: 45,
+        servings: 4,
+        difficulty: "Medium",
+        ingredients: [
+          "4 medium potatoes, boiled, peeled and mashed",
+          "1 tbsp oil",
+          "1/2 tsp mustard seeds",
+          "8–10 curry leaves",
+          "6 garlic cloves, 1 inch ginger and 3 green chillies, crushed together",
+          "1/4 tsp turmeric",
+          "2 tbsp chopped coriander",
+          "1 tsp lemon juice and salt to taste",
+          "For the batter: 1 cup besan (gram flour), 1/4 tsp turmeric, 1/2 tsp red chilli powder, a pinch of baking soda, salt, about 3/4 cup water",
+          "Oil for deep frying",
+          "8 pav (soft bread rolls)",
+          "Dry garlic chutney and green chutney, to serve",
+        ],
+        instructions: [
+          "Heat 1 tbsp oil, add mustard seeds and let them splutter. Add curry leaves and the crushed garlic-ginger-chilli and sauté for a minute.",
+          "Add turmeric, then the mashed potatoes, salt, coriander and lemon juice. Mix well, cool slightly and shape into 8 balls.",
+          "Whisk the besan, turmeric, chilli powder, baking soda and salt with water into a thick, smooth batter.",
+          "Heat oil for deep frying. Dip each potato ball in the batter and fry on medium heat until golden and crisp. Drain on paper.",
+          "Slit the pav without cutting through, spread green chutney and sprinkle dry garlic chutney inside.",
+          "Place a hot vada in each pav, press gently and serve with fried green chillies.",
+        ],
+      },
+      {
+        name: "Sweet Saravle",
+        description: "The Kokni Muslim Eid classic — hand-rolled pasta rings slow-cooked with ghee, whole spices and sugar.",
+        image: "",
+        cookingTime: 60,
+        servings: 4,
+        difficulty: "Medium",
+        ingredients: [
+          "For the saravle: 1 cup plain flour (maida), a pinch of salt, about 1/3 cup water (or 1 cup ready-made saravle)",
+          "2–3 tbsp ghee",
+          "4 green cardamoms, 3 cloves and a small piece of cinnamon",
+          "1 1/2 cups water",
+          "1/3 cup sugar (adjust to taste)",
+          "A pinch of salt",
+          "Optional: a few drops of kewra water, fried cashews, almonds and raisins to garnish",
+        ],
+        instructions: [
+          "Make the saravle: knead the flour, salt and water into a firm, smooth dough. Pinch off tiny pieces, roll each into a thin strand and loop it around your finger to make a small ring. Dry the rings for a day (or use ready-made saravle).",
+          "Heat a heavy pot on medium flame and dry-roast the saravle for 5–7 minutes until fragrant and lightly golden.",
+          "Add the whole spices and ghee and fry for 2–3 minutes until the ghee coats every ring.",
+          "Add the water, cover and simmer for 5–7 minutes until the saravle are just tender.",
+          "Add the sugar and salt, mix gently, cover and cook on the lowest flame for about 10 minutes until the water is absorbed and the saravle are soft.",
+          "Finish with a few drops of kewra water and garnish with fried dry fruits. Serve warm.",
+        ],
+      },
+      {
+        name: "Virgin Mojito",
+        description: "A refreshing alcohol-free lime and mint cooler — ready in 5 minutes.",
+        image: commonsPhoto(PHOTOS.virginMojito),
+        cookingTime: 5,
+        servings: 2,
+        difficulty: "Easy",
+        ingredients: [
+          "1 lime, cut into wedges",
+          "12–15 fresh mint leaves, plus sprigs to garnish",
+          "2 tbsp sugar or sugar syrup",
+          "Crushed ice",
+          "300 ml chilled soda water or lemon-lime soda",
+          "A pinch of black salt (optional)",
+        ],
+        instructions: [
+          "Divide the lime wedges, mint leaves and sugar between two glasses.",
+          "Gently muddle with a spoon to release the lime juice and mint aroma — don't shred the leaves.",
+          "Fill the glasses with crushed ice.",
+          "Top up with chilled soda, add a pinch of black salt if you like, and stir gently.",
+          "Garnish with a mint sprig and a lime wheel and serve immediately.",
+        ],
+      },
+    ],
+  },
+];
+
+async function applyRecipePacks() {
+  for (const pack of RECIPE_PACKS) {
+    if (await db.seedRun.findUnique({ where: { id: pack.id } })) continue;
+    const existing = new Set((await db.recipe.findMany({ select: { name: true } })).map((r) => r.name));
+    const toAdd = pack.recipes.filter((r) => !existing.has(r.name));
+    await db.$transaction([
+      ...toAdd.map((r) =>
+        db.recipe.create({
+          data: { ...r, ingredients: r.ingredients.join("\n"), instructions: r.instructions.join("\n") },
+        }),
+      ),
+      db.seedRun.create({ data: { id: pack.id } }),
+    ]);
+    console.log(`✔ Added ${toAdd.length} recipes from update "${pack.id}"`);
+  }
+}
+
+
 /**
  * Earlier versions of this app shipped different sample menus (a generic one,
  * then "KokniSwaad" with illustrations and rupee prices). If that untouched
@@ -577,6 +706,7 @@ async function main() {
   await applyMenuPacks();
   await applyCategoryUpdate();
   await retireOldCategories();
+  await applyRecipePacks();
 }
 
 main()
