@@ -64,6 +64,7 @@ npm run dev            # start the app at http://localhost:3000
 | `SESSION_SECRET`  | yes      | Random string, **at least 32 characters**, used to sign admin sessions. Generate one with `openssl rand -base64 32`. |
 | `ADMIN_EMAIL`     | for seeding | Email of the first admin, created by `npm run setup` / `npm run db:seed`. |
 | `ADMIN_PASSWORD`  | for seeding | Password of the first admin. **Change it after your first login.** |
+| `ADMIN_RENAME_FROM` | optional | An existing admin email to rename to `ADMIN_EMAIL` on the next seed or deploy. The password is kept. |
 
 All secrets stay on the server. Nothing is exposed to the browser (there are no `NEXT_PUBLIC_` variables).
 
@@ -73,7 +74,7 @@ All secrets stay on the server. Nothing is exposed to the browser (there are no 
 
 1. Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`. The example values are `admin@example.com` / `ChangeMe123!`.
 2. Run `npm run setup`, or `npm run admin:create`. This creates the admin with a bcrypt-hashed password.
-3. Open **http://localhost:3000/admin** and sign in. The site footer also has a "Staff login" link.
+3. Open **http://localhost:3000/admin** and sign in. The site footer also has an "Admin login" link.
 4. Choose your own password under **Settings → Change password**. If you sign in with the example password, the app takes you there automatically and shows a reminder.
 
 To add another admin or reset a forgotten password:
@@ -81,6 +82,8 @@ To add another admin or reset a forgotten password:
 ```bash
 npm run admin:create -- someone@example.com "a-new-strong-password"
 ```
+
+To change an existing admin's login email but keep their password, set `ADMIN_EMAIL` to the new address and `ADMIN_RENAME_FROM` to the old one, then run `npm run db:seed` (on Vercel, just redeploy).
 
 ### What you can do in the dashboard
 

@@ -46,7 +46,7 @@ export function SiteFooter() {
             Photo credits
           </Link>
           <Link href="/admin" className="hover:text-ink">
-            Staff login
+            Admin login
           </Link>
         </div>
       </div>

@@ -352,6 +352,22 @@ async function main() {
   // Admin user
   const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   const password = process.env.ADMIN_PASSWORD;
+  // Optional: move an existing admin to ADMIN_EMAIL (keeps their password).
+  const renameFrom = process.env.ADMIN_RENAME_FROM?.trim().toLowerCase();
+  if (email && renameFrom && renameFrom !== email) {
+    const [from, to] = await Promise.all([
+      db.admin.findUnique({ where: { email: renameFrom } }),
+      db.admin.findUnique({ where: { email } }),
+    ]);
+    if (from && !to) {
+      await db.admin.update({
+        where: { id: from.id },
+        // Bumping tokenVersion signs out sessions that used the old email.
+        data: { email, tokenVersion: { increment: 1 } },
+      });
+      console.log(`✔ Changed admin email ${renameFrom} → ${email} (password unchanged)`);
+    }
+  }
   if (email && password) {
     const existing = await db.admin.findUnique({ where: { email } });
     if (!existing) {
