@@ -9,13 +9,16 @@ import { cn } from "@/lib/cn";
 import { XIcon } from "@/components/ui/icons";
 import { cartActions, useCart } from "./cart-store";
 import { MenuItemCard } from "./menu-item-card";
-import { OrderSummary, type SummaryLine } from "./order-summary";
+import { OrderSummary, type ContactErrors, type SummaryLine } from "./order-summary";
+import { phoneField } from "@/lib/validation";
 
 export function OrderMenu({ items }: { items: MenuItem[] }) {
   const router = useRouter();
   const cart = useCart();
   const [category, setCategory] = useState<string>("All");
   const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [contactErrors, setContactErrors] = useState<ContactErrors>({});
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -55,9 +58,23 @@ export function OrderMenu({ items }: { items: MenuItem[] }) {
     cartActions.setQuantity(id, q);
   }
 
+  function validateContact(): ContactErrors {
+    const errors: ContactErrors = {};
+    if (customerName.trim().length < 2) errors.customerName = "Please enter your name";
+    const phone = phoneField.safeParse(customerPhone);
+    if (!phone.success) errors.customerPhone = phone.error.issues[0]?.message;
+    return errors;
+  }
+
   function handleSubmit() {
     if (lines.length === 0) {
       setError("Please add at least one item to your order.");
+      return;
+    }
+    const errors = validateContact();
+    setContactErrors(errors);
+    if (errors.customerName || errors.customerPhone) {
+      setError("Please add your name and contact number so we can reach you about your order.");
       return;
     }
     setError(null);
@@ -65,6 +82,7 @@ export function OrderMenu({ items }: { items: MenuItem[] }) {
       const result = await submitOrder({
         items: lines.map((l) => ({ id: l.id, quantity: l.quantity })),
         customerName,
+        customerPhone,
         notes,
       });
       if (result.ok) {
@@ -73,6 +91,7 @@ export function OrderMenu({ items }: { items: MenuItem[] }) {
         return;
       }
       setError(result.error);
+      if (result.field) setContactErrors({ [result.field]: result.error });
       if (result.unavailableIds?.length) {
         cartActions.remove(result.unavailableIds);
         router.refresh();
@@ -86,11 +105,22 @@ export function OrderMenu({ items }: { items: MenuItem[] }) {
       lines={lines}
       totalCents={totalCents}
       customerName={customerName}
+      customerPhone={customerPhone}
       notes={notes}
       error={error}
+      contactErrors={contactErrors}
       pending={pending}
       onQuantityChange={setQuantity}
-      onCustomerNameChange={setCustomerName}
+      onCustomerNameChange={(v) => {
+        setCustomerName(v);
+        setContactErrors((e) => ({ ...e, customerName: undefined }));
+        setError(null);
+      }}
+      onCustomerPhoneChange={(v) => {
+        setCustomerPhone(v);
+        setContactErrors((e) => ({ ...e, customerPhone: undefined }));
+        setError(null);
+      }}
       onNotesChange={setNotes}
       onSubmit={handleSubmit}
     />

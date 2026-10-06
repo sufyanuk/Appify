@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-// For the Marathi (Devanagari) touches such as "कोकणी स्वाद".
+// For the Marathi (Devanagari) touches such as "कोकणी जेवण".
 const devanagari = Noto_Sans_Devanagari({
   variable: "--font-devanagari",
   subsets: ["devanagari"],
@@ -13,11 +13,11 @@ const devanagari = Noto_Sans_Devanagari({
 
 export const metadata: Metadata = {
   title: {
-    default: "KokniSwaad — Homemade Kokni food",
-    template: "%s · KokniSwaad",
+    default: "Kokni Jevan — Homemade Kokni food in Qatar",
+    template: "%s · Kokni Jevan",
   },
   description:
-    "Order homemade Kokni and Malvani food — fish thali, kombdi vade, solkadhi and more — or cook easy Kokni recipes at home.",
+    "Order homemade Kokni and Malvani food in Qatar — fish thali, kombdi vade, solkadhi and more — or cook easy Kokni recipes at home.",
 };
 
 export const viewport: Viewport = {

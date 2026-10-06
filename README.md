@@ -1,9 +1,9 @@
-# KokniSwaad (कोकणी स्वाद): Homemade Kokni Food
+# Kokni Jevan (कोकणी जेवण): Homemade Kokni Food in Qatar
 
 A simple, mobile-friendly web app for a home kitchen serving Kokni (Konkan, Maharashtra) food. It has two jobs:
 
 1. **Browse easy recipes**: simple Kokni dishes such as solkadhi, ghavane and kolambi fry, with ingredients, numbered steps, time and difficulty.
-2. **Order homemade food**: Malvani fish thali, kombdi vade, surmai fry, modak and more. Choose quantities, review, submit and get an order number. No account and no online payment needed (pay on delivery or collection). Prices are in ₹ and times are shown in Indian Standard Time.
+2. **Order homemade food**: Malvani fish thali, kombdi vade, surmai fry, modak and more. Choose quantities, give your **name and contact number** (both required), submit and get an order number. No account and no online payment needed (pay on delivery or collection). Prices are in **Qatari riyals (QAR)** and times are shown in Qatar time.
 
 There's also a protected **Admin Dashboard** where you manage the menu, recipes and orders without touching code.
 
@@ -139,14 +139,14 @@ src/
 | Table         | Columns |
 | ------------- | ------- |
 | **FoodItem**  | `id`, `name`, `description`, `priceCents`, `image`, `category`, `available`, `createdAt`, `updatedAt` |
-| **Order**     | `id` (sequential), `publicId` (unguessable, used in the confirmation URL), `orderNumber` (e.g. `ORD-1024`), `customerName`, `notes`, `totalCents`, `status`, `createdAt`, `updatedAt` |
+| **Order**     | `id` (sequential), `publicId` (unguessable, used in the confirmation URL), `orderNumber` (e.g. `ORD-1024`), `customerName`, `customerPhone`, `notes`, `totalCents`, `status`, `createdAt`, `updatedAt` |
 | **OrderItem** | `id`, `orderId`, `foodItemId` (nullable), `name`, `unitPriceCents`, `quantity`, `lineTotalCents` |
 | **Recipe**    | `id`, `name`, `description`, `image`, `ingredients` (one per line), `instructions` (one per line), `cookingTime` (minutes), `servings`, `difficulty`, `createdAt`, `updatedAt` |
 | **Admin**     | `id`, `email`, `name`, `passwordHash` (bcrypt), `tokenVersion`, `createdAt`, `updatedAt` |
 
 Design notes:
 
-- **Prices are stored as integer cents**, so there are no floating-point rounding errors.
+- **Prices are stored as whole numbers of dirhams** (QAR 1 = 100 dirhams), so there are no floating-point rounding errors.
 - **Each order line stores its own copy of the name and price** at the time of ordering. Editing or deleting a menu item never changes past orders.
 - Order items live in their own table instead of a JSON blob, which makes reporting easy later.
 
@@ -182,8 +182,8 @@ Any other Node host (Railway, Render, Fly.io, a VPS) works too: run `npm run set
 
 ## Possible future improvements
 
-- **Photo uploads.** Every sample dish uses a built-in illustration from `public/images/dishes/`. Admins can paste a link to a real photo of their own cooking. Direct uploads could go to Vercel Blob.
-- **Phone number and delivery address fields** on the order form. Customers can already add these in the order notes.
+- **Your own photos.** The sample dishes use real, freely licensed photos from Wikimedia Commons (credited on `/credits`, listed in `src/lib/photos.ts`). Replacing them with photos of your own cooking (paste a link in Admin → Food items) makes the menu more authentic. Direct uploads could go to Vercel Blob.
+- **A delivery address field** on the order form. Customers can already add this in the order notes.
 - **Live order updates.** The admin orders list and the customer confirmation page could poll for or stream status changes.
 - **Shared rate limiting.** Swap the in-memory limiter for Upstash Redis when running on multiple instances.
 - **Order notifications.** Email or SMS the kitchen when an order arrives, and the customer when it's ready.

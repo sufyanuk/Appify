@@ -44,9 +44,9 @@ export function FoodForm({
       </Field>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Price (₹)" htmlFor="price" errors={errors.price}>
+        <Field label="Price (QAR)" htmlFor="price" errors={errors.price}>
           <div className="relative">
-            <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-muted">₹</span>
+            <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-sm text-muted">QAR</span>
             <Input
               id="price"
               name="price"
@@ -54,7 +54,7 @@ export function FoodForm({
               required
               defaultValue={v("price", item ? centsToInput(item.priceCents) : "")}
               placeholder="0"
-              className="pl-7"
+              className="pl-14"
               {...errorProps("price", errors.price)}
             />
           </div>

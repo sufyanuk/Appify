@@ -16,12 +16,12 @@ const imageField = z
     "Image must be a valid http(s) URL",
   );
 
-/** Accepts "250", "99.5" or "99.50" and converts rupees → integer paise. */
+/** Accepts "25", "12.5" or "12.50" and converts riyals → integer dirhams. */
 const priceField = z
   .string()
   .trim()
   .min(1, "Price is required")
-  .regex(/^\d+(\.\d{1,2})?$/, "Enter a valid price, e.g. 250 or 99.50")
+  .regex(/^\d+(\.\d{1,2})?$/, "Enter a valid price, e.g. 25 or 12.50")
   .transform((v) => Math.round(Number(v) * 100))
   .refine((c) => c > 0, "Price must be greater than 0")
   .refine((c) => c <= MAX_PRICE_CENTS, "Price is too high");
@@ -74,6 +74,21 @@ export const recipeSchema = z.object({
 export type RecipeInput = z.infer<typeof recipeSchema>;
 
 /**
+ * A contact number: digits with optional +, spaces, dashes or brackets,
+ * 7–15 digits in total (covers Qatari 8-digit numbers and international ones).
+ */
+export const phoneField = z
+  .string()
+  .trim()
+  .min(1, "Please enter your contact number")
+  .max(25, "Contact number is too long")
+  .refine((v) => /^\+?[\d\s\-()]+$/.test(v), "Use digits only, e.g. +974 5555 1234")
+  .refine((v) => {
+    const digits = v.replace(/\D/g, "").length;
+    return digits >= 7 && digits <= 15;
+  }, "Enter a valid contact number, e.g. +974 5555 1234");
+
+/**
  * What the browser sends when submitting an order. Only ids and quantities —
  * prices are always looked up on the server.
  */
@@ -91,7 +106,12 @@ export const orderSchema = z.object({
     )
     .min(1, "Your order is empty")
     .max(100, "Too many items in one order"),
-  customerName: z.string().trim().max(80, "Name is too long").default(""),
+  customerName: z
+    .string()
+    .trim()
+    .min(2, "Please enter your name")
+    .max(80, "Name is too long"),
+  customerPhone: phoneField,
   notes: z.string().trim().max(500, "Notes are too long").default(""),
 });
 export type OrderInput = z.infer<typeof orderSchema>;

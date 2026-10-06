@@ -38,6 +38,7 @@ model Order {
   /// Human friendly number shown to customers, e.g. "ORD-1024".
   orderNumber  String      @unique
   customerName String      @default("")
+  customerPhone String     @default("")
   notes        String      @default("")
   totalCents   Int
   /// One of: RECEIVED, PREPARING, READY, COMPLETED, CANCELLED

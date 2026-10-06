@@ -11,7 +11,7 @@ export function ImageUrlField({ defaultValue, errors }: { defaultValue: string; 
     <Field
       label="Image URL"
       htmlFor="image"
-      hint="Paste a link to a photo of your dish, or a built-in illustration such as /images/dishes/solkadhi.svg. Leave empty for a placeholder."
+      hint="Paste a link to a photo of your dish (ideally your own photo). Leave empty for a placeholder."
       errors={errors}
     >
       <div className="flex items-start gap-3">

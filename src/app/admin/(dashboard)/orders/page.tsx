@@ -73,6 +73,14 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                       <div>
                         <p className="font-semibold tabular-nums">{order.orderNumber}</p>
                         {order.customerName && <p className="text-muted">{order.customerName}</p>}
+                        {order.customerPhone && (
+                          <a
+                            href={`tel:${order.customerPhone.replace(/[^\d+]/g, "")}`}
+                            className="text-sm font-medium text-brand-600 hover:underline"
+                          >
+                            {order.customerPhone}
+                          </a>
+                        )}
                       </div>
                       <span className="font-semibold tabular-nums md:hidden">{formatPrice(order.totalCents)}</span>
                     </div>

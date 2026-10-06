@@ -2,22 +2,26 @@
 
 import { formatPrice } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { Input, Textarea } from "@/components/ui/field";
+import { Input, Textarea, errorProps } from "@/components/ui/field";
 import { BagIcon } from "@/components/ui/icons";
 import { QuantityStepper } from "./quantity-stepper";
 
 export type SummaryLine = { id: string; name: string; priceCents: number; quantity: number };
+export type ContactErrors = { customerName?: string; customerPhone?: string };
 
 /** "Your order" panel — used in the desktop sidebar and the mobile sheet. */
 export function OrderSummary({
   lines,
   totalCents,
   customerName,
+  customerPhone,
   notes,
   error,
+  contactErrors,
   pending,
   onQuantityChange,
   onCustomerNameChange,
+  onCustomerPhoneChange,
   onNotesChange,
   onSubmit,
   idPrefix,
@@ -25,11 +29,14 @@ export function OrderSummary({
   lines: SummaryLine[];
   totalCents: number;
   customerName: string;
+  customerPhone: string;
   notes: string;
   error: string | null;
+  contactErrors: ContactErrors;
   pending: boolean;
   onQuantityChange: (id: string, q: number) => void;
   onCustomerNameChange: (v: string) => void;
+  onCustomerPhoneChange: (v: string) => void;
   onNotesChange: (v: string) => void;
   onSubmit: () => void;
   idPrefix: string;
@@ -38,6 +45,7 @@ export function OrderSummary({
 
   return (
     <form
+      noValidate
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit();
@@ -78,17 +86,39 @@ export function OrderSummary({
         <div className="mt-2 space-y-3 border-t border-line pt-4">
           <div>
             <label htmlFor={`${idPrefix}-name`} className="text-sm font-medium">
-              Name for the order <span className="font-normal text-muted">(optional)</span>
+              Your name <span className="text-red-600" aria-hidden="true">*</span>
             </label>
             <Input
               id={`${idPrefix}-name`}
               value={customerName}
               onChange={(e) => onCustomerNameChange(e.target.value)}
               maxLength={80}
-              autoComplete="given-name"
-              placeholder="So we can call you when it's ready"
+              required
+              autoComplete="name"
+              placeholder="e.g. Priya Sawant"
               className="mt-1.5"
+              {...errorProps(`${idPrefix}-name`, toList(contactErrors.customerName))}
             />
+            <FieldErrorText id={`${idPrefix}-name`} message={contactErrors.customerName} />
+          </div>
+          <div>
+            <label htmlFor={`${idPrefix}-phone`} className="text-sm font-medium">
+              Contact number <span className="text-red-600" aria-hidden="true">*</span>
+            </label>
+            <Input
+              id={`${idPrefix}-phone`}
+              type="tel"
+              inputMode="tel"
+              value={customerPhone}
+              onChange={(e) => onCustomerPhoneChange(e.target.value)}
+              maxLength={25}
+              required
+              autoComplete="tel"
+              placeholder="e.g. +974 5555 1234"
+              className="mt-1.5"
+              {...errorProps(`${idPrefix}-phone`, toList(contactErrors.customerPhone))}
+            />
+            <FieldErrorText id={`${idPrefix}-phone`} message={contactErrors.customerPhone} />
           </div>
           <div>
             <label htmlFor={`${idPrefix}-notes`} className="text-sm font-medium">
@@ -100,7 +130,7 @@ export function OrderSummary({
               onChange={(e) => onNotesChange(e.target.value)}
               maxLength={500}
               rows={2}
-              placeholder="Spice level, allergies, delivery address…"
+              placeholder="Spice level, allergies, delivery area…"
               className="mt-1.5 resize-none"
             />
           </div>
@@ -125,3 +155,14 @@ export function OrderSummary({
     </form>
   );
 }
+
+function FieldErrorText({ id, message }: { id: string; message?: string }) {
+  if (!message) return null;
+  return (
+    <p id={`${id}-error`} className="mt-1 text-sm text-red-600">
+      {message}
+    </p>
+  );
+}
+
+const toList = (message?: string) => (message ? [message] : undefined);

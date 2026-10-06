@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PHOTOS, commonsPhoto } from "@/lib/photos";
 import { FoodImage } from "@/components/ui/food-image";
 import { ArrowRightIcon, BagIcon, BookIcon } from "@/components/ui/icons";
 
@@ -7,14 +8,14 @@ const choices = [
     href: "/recipes",
     title: "Browse Easy Recipes",
     text: "Simple Kokni dishes to cook in your own kitchen.",
-    image: "/images/dishes/home-recipes.svg",
+    image: commonsPhoto(PHOTOS.modakPuneri, 1200),
     icon: BookIcon,
   },
   {
     href: "/order",
     title: "Order Food Items",
     text: "Fresh homemade thalis, seafood, vade and more.",
-    image: "/images/dishes/home-order.svg",
+    image: commonsPhoto(PHOTOS.chickenThali, 1200),
     icon: BagIcon,
   },
 ];
@@ -24,7 +25,7 @@ export default function HomePage() {
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6 sm:pt-16">
       <section className="mx-auto max-w-2xl text-center">
         <p className="text-sm font-medium text-brand-600">
-          <span lang="mr">घरगुती कोकणी जेवण</span> · Homemade Kokni food
+          <span lang="mr">घरगुती कोकणी जेवण</span> · Homemade Kokni food in Qatar
         </p>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
           The taste of the Konkan, cooked at home

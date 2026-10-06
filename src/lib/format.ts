@@ -1,30 +1,37 @@
-// Formatting for an Indian audience: rupees and Indian Standard Time.
-const wholeRupees = new Intl.NumberFormat("en-IN", {
+// Formatting for customers in Qatar: Qatari riyals and Qatar time (AST, UTC+3).
+const wholeRiyals = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "INR",
+  currency: "QAR",
+  currencyDisplay: "code",
   maximumFractionDigits: 0,
 });
-const rupeesAndPaise = new Intl.NumberFormat("en-IN", {
+const riyalsAndDirhams = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "INR",
+  currency: "QAR",
+  currencyDisplay: "code",
   minimumFractionDigits: 2,
 });
 
-/** Paise → "₹1,250" or "₹99.50". */
-export function formatPrice(paise: number): string {
-  return (paise % 100 === 0 ? wholeRupees : rupeesAndPaise).format(paise / 100);
+/**
+ * Prices are stored as integer dirhams (1 QAR = 100 dirhams).
+ * 3500 → "QAR 35", 1250 → "QAR 12.50".
+ */
+export function formatPrice(dirhams: number): string {
+  return (dirhams % 100 === 0 ? wholeRiyals : riyalsAndDirhams)
+    .format(dirhams / 100)
+    .replace(/\u00a0/g, " ");
 }
 
-/** Paise → "250" or "99.50" for editing in a form input. */
-export function centsToInput(paise: number): string {
-  return paise % 100 === 0 ? String(paise / 100) : (paise / 100).toFixed(2);
+/** Dirhams → "35" or "12.50" for editing in a form input. */
+export function centsToInput(dirhams: number): string {
+  return dirhams % 100 === 0 ? String(dirhams / 100) : (dirhams / 100).toFixed(2);
 }
 
 export function formatDateTime(date: Date): string {
-  return new Intl.DateTimeFormat("en-IN", {
+  return new Intl.DateTimeFormat("en-GB", {
     dateStyle: "medium",
     timeStyle: "short",
-    timeZone: "Asia/Kolkata",
+    timeZone: "Asia/Qatar",
   }).format(date);
 }
 

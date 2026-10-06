@@ -26,6 +26,11 @@ export default async function ConfirmationPage({
         <p className="mt-2 text-muted">
           Thanks{order.customerName ? `, ${order.customerName}` : ""}! We&apos;ve received your order.
         </p>
+        {order.customerPhone && (
+          <p className="mt-1 text-sm text-muted">
+            We&apos;ll contact you on <span className="font-medium text-ink">{order.customerPhone}</span> if needed.
+          </p>
+        )}
       </div>
 
       <div className="mt-8 overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-line/60">

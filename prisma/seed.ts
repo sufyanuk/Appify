@@ -1,115 +1,129 @@
 /**
- * Seeds the database with the KokniSwaad sample menu, easy Kokni recipes and
+ * Seeds the database with the Kokni Jevan sample menu, easy Kokni recipes and
  * the admin user. Run with: npm run db:seed   (safe to re-run — it only fills
  * empty tables, so your own edits are never overwritten)
  */
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { PHOTOS, commonsPhoto } from "../src/lib/photos";
 
 const db = new PrismaClient();
 
-/** Built-in illustrations live in public/images/dishes. */
-const art = (name: string) => `/images/dishes/${name}.svg`;
+// Prices are in dirhams (QAR 1 = 100 dirhams).
+const qar = (riyals: number) => Math.round(riyals * 100);
 
-// Prices are in paise (₹1 = 100 paise).
 const foodItems = [
   {
     name: "Malvani Fish Thali",
-    description: "Surmai fry, Malvani fish curry, solkadhi, rice and tandlachi bhakri.",
-    priceCents: 35000,
+    description: "Pomfret fry, Malvani fish curry, solkadhi, rice and bhakri.",
+    priceCents: qar(45),
     category: "Thali",
-    image: art("malvani-fish-thali"),
+    image: commonsPhoto(PHOTOS.fishThali),
+  },
+  {
+    name: "Malvani Chicken Thali",
+    description: "Chicken sukka, chicken curry, solkadhi, chapati, rice, chutney and pickle.",
+    priceCents: qar(38),
+    category: "Thali",
+    image: commonsPhoto(PHOTOS.chickenThali),
   },
   {
     name: "Surmai Fry",
     description: "Kingfish steaks in a spicy Malvani masala, shallow-fried in a rava crust.",
-    priceCents: 32000,
+    priceCents: qar(40),
     category: "Seafood",
-    image: art("surmai-fry"),
+    image: commonsPhoto(PHOTOS.surmaiFry),
   },
   {
-    name: "Kolambi Masala",
-    description: "Prawns simmered in a rich coconut and Malvani masala gravy.",
-    priceCents: 30000,
+    name: "Surmai Fry with Kolambi Curry",
+    description: "Crispy surmai fry served with a rich coconut prawn curry.",
+    priceCents: qar(48),
     category: "Seafood",
-    image: art("kolambi-masala"),
+    image: commonsPhoto(PHOTOS.surmaiPrawnCurry),
   },
   {
-    name: "Bangda Curry with Rice",
-    description: "Mackerel in a tangy kokum and coconut curry, served with steamed rice.",
-    priceCents: 24000,
+    name: "Bangda Curry Plate",
+    description: "Mackerel in a tangy kokum and coconut curry, served with rice.",
+    priceCents: qar(30),
     category: "Seafood",
-    image: art("bangda-curry"),
+    image: commonsPhoto(PHOTOS.bangdaCurry),
   },
   {
     name: "Bombil Fry",
     description: "Crispy rava-fried Bombay duck — a Konkan coast favourite.",
-    priceCents: 22000,
+    priceCents: qar(28),
     category: "Seafood",
-    image: art("bombil-fry"),
+    image: commonsPhoto(PHOTOS.bombilFry),
+  },
+  {
+    name: "Fish Koliwada",
+    description: "Koli-style spicy fried fish bites with lemon and onion.",
+    priceCents: qar(32),
+    category: "Seafood",
+    image: commonsPhoto(PHOTOS.fishKoliwada),
   },
   {
     name: "Kombdi Vade",
     description: "Malvani chicken curry with soft, puffed vade made from rice and urad flour.",
-    priceCents: 28000,
+    priceCents: qar(35),
     category: "Chicken",
-    image: art("kombdi-vade"),
+    image: commonsPhoto(PHOTOS.kombdiVade),
   },
   {
     name: "Pithla Bhakri",
-    description: "Comforting besan pithla with jowar bhakri, onion and green chilli.",
-    priceCents: 15000,
+    description: "Comforting besan pithla with bhakri, onion and green chilli.",
+    priceCents: qar(18),
     category: "Vegetarian",
-    image: art("pithla-bhakri"),
+    image: commonsPhoto(PHOTOS.pithlaBhakri),
   },
   {
-    name: "Kala Vatana Usal with Vade",
-    description: "Black peas in roasted coconut masala with two Malvani vade.",
-    priceCents: 16000,
+    name: "Misal Pav",
+    description: "Spicy sprouted-moth usal topped with farsan, onion and lemon, with pav.",
+    priceCents: qar(18),
     category: "Vegetarian",
-    image: art("kala-vatana-usal"),
+    image: commonsPhoto(PHOTOS.misalPav),
   },
   {
-    name: "Ghavane with Chutney",
-    description: "Soft, lacy rice-flour pancakes with fresh coconut chutney.",
-    priceCents: 9000,
+    name: "Vada Pav (2 pcs)",
+    description: "Batata vada in soft pav with garlic and green chutney.",
+    priceCents: qar(10),
     category: "Snacks",
-    image: art("ghavane-chutney"),
+    image: commonsPhoto(PHOTOS.vadaPav),
   },
   {
-    name: "Kothimbir Vadi",
-    description: "Crisp coriander and besan squares with green chutney.",
-    priceCents: 10000,
+    name: "Sabudana Vada (4 pcs)",
+    description: "Crisp sago and peanut vadas with green chutney.",
+    priceCents: qar(14),
     category: "Snacks",
-    image: art("kothimbir-vadi"),
+    image: commonsPhoto(PHOTOS.sabudanaVada),
   },
   {
     name: "Ukadiche Modak (4 pcs)",
     description: "Steamed rice-flour modak filled with coconut and jaggery.",
-    priceCents: 16000,
+    priceCents: qar(20),
     category: "Sweets",
-    image: art("ukadiche-modak"),
+    image: commonsPhoto(PHOTOS.modak),
   },
   {
-    name: "Aamras Puri",
-    description: "Sweet Alphonso mango pulp with two hot puris (seasonal).",
-    priceCents: 12000,
+    name: "Aamras Puran Poli",
+    description: "Sweet Alphonso mango pulp with soft puran poli (seasonal).",
+    priceCents: qar(22),
     category: "Sweets",
-    image: art("aamras-puri"),
+    image: commonsPhoto(PHOTOS.aamrasPuranPoli),
   },
   {
     name: "Solkadhi",
     description: "Cooling kokum and coconut milk drink — the perfect end to a Kokni meal.",
-    priceCents: 6000,
+    priceCents: qar(8),
     category: "Drinks",
-    image: art("solkadhi"),
+    image: commonsPhoto(PHOTOS.solkadhi),
   },
   {
     name: "Kokum Sharbat",
     description: "Sweet and tangy kokum cooler, served chilled.",
-    priceCents: 5000,
+    priceCents: qar(7),
     category: "Drinks",
-    image: art("kokum-sharbat"),
+    image: commonsPhoto(PHOTOS.kokumSharbat),
   },
 ];
 
@@ -117,7 +131,7 @@ const recipes = [
   {
     name: "Solkadhi",
     description: "The pink, cooling kokum and coconut drink served after every Kokni meal.",
-    image: art("solkadhi"),
+    image: commonsPhoto(PHOTOS.solkadhi),
     cookingTime: 25,
     servings: 4,
     difficulty: "Easy",
@@ -142,7 +156,7 @@ const recipes = [
   {
     name: "Kokum Sharbat",
     description: "A quick, refreshing summer cooler made from kokum syrup.",
-    image: art("kokum-sharbat"),
+    image: commonsPhoto(PHOTOS.kokumSharbat),
     cookingTime: 5,
     servings: 2,
     difficulty: "Easy",
@@ -162,82 +176,85 @@ const recipes = [
     ],
   },
   {
-    name: "Ghavane",
-    description: "Soft, lacy Konkan rice-flour pancakes — ready in 15 minutes.",
-    image: art("ghavane-chutney"),
+    name: "Pithla",
+    description: "A comforting besan (gram flour) curry, ready in 15 minutes — perfect with bhakri.",
+    image: commonsPhoto(PHOTOS.pithlaBhakri),
     cookingTime: 15,
     servings: 2,
     difficulty: "Easy",
     ingredients: [
-      "1 cup rice flour",
-      "1 1/4 cups water (approx.)",
-      "Salt to taste",
-      "1/4 tsp cumin seeds (optional)",
-      "Oil or ghee for the pan",
-    ],
-    instructions: [
-      "Whisk the rice flour, salt and cumin with water into a thin, lump-free batter.",
-      "Heat a non-stick tawa on medium and grease it lightly.",
-      "Pour a ladle of batter from the edges inward so it spreads into a thin, lacy pancake.",
-      "Cover and cook for 1–2 minutes until the top is set. No need to flip.",
-      "Serve hot with coconut chutney or a little ghee and jaggery.",
-    ],
-  },
-  {
-    name: "Kokni Batata Bhaji",
-    description: "Simple potato bhaji with mustard, curry leaves and fresh coconut.",
-    image: art("batata-bhaji"),
-    cookingTime: 20,
-    servings: 3,
-    difficulty: "Easy",
-    ingredients: [
-      "3 potatoes, boiled and cubed",
+      "1/2 cup besan (gram flour)",
+      "1 1/2 cups water",
       "1 tbsp oil",
       "1/2 tsp mustard seeds",
-      "8–10 curry leaves",
+      "1/2 tsp cumin seeds",
+      "6–8 curry leaves",
       "2 green chillies, chopped",
+      "1 small onion, chopped",
       "1/4 tsp turmeric",
-      "2 tbsp fresh grated coconut",
       "Salt to taste",
       "Chopped coriander",
     ],
     instructions: [
-      "Heat oil in a kadhai and add mustard seeds. Let them splutter.",
-      "Add curry leaves, green chillies and turmeric. Stir for a few seconds.",
-      "Add the potatoes and salt and toss gently for 3–4 minutes.",
-      "Mix in the grated coconut and coriander.",
-      "Serve hot with bhakri, chapati or as a side with varan bhaat.",
+      "Whisk the besan with the water and a pinch of salt until smooth, with no lumps.",
+      "Heat oil in a pan and add mustard and cumin seeds. Let them splutter.",
+      "Add curry leaves, green chillies and onion. Cook for 2 minutes until soft.",
+      "Add turmeric, then pour in the besan mixture while stirring continuously.",
+      "Cook on low heat for 5–7 minutes, stirring, until thick and glossy.",
+      "Garnish with coriander and serve hot with bhakri or rice.",
     ],
   },
   {
-    name: "Kolambi Fry",
-    description: "Spicy, crispy prawn fry — Konkan coast style.",
-    image: art("kolambi-fry"),
-    cookingTime: 25,
+    name: "Aamras",
+    description: "Sweet, silky Alphonso mango pulp — the taste of a Konkan summer.",
+    image: commonsPhoto(PHOTOS.aamrasPuranPoli2),
+    cookingTime: 10,
+    servings: 4,
+    difficulty: "Easy",
+    ingredients: [
+      "4 ripe Alphonso (hapus) mangoes",
+      "1–2 tbsp sugar (only if the mangoes aren't sweet)",
+      "1/4 tsp cardamom powder",
+      "Pinch of saffron (optional)",
+      "2–3 tbsp cold milk (optional)",
+    ],
+    instructions: [
+      "Wash, peel and chop the mangoes, discarding the seeds.",
+      "Blend the mango with cardamom (and sugar or milk if using) until smooth.",
+      "Stir in the saffron and chill for 20 minutes.",
+      "Serve cold with puri or puran poli.",
+    ],
+  },
+  {
+    name: "Surmai Rava Fry",
+    description: "Crispy, spicy kingfish fry — Konkan coast style, in under 30 minutes.",
+    image: commonsPhoto(PHOTOS.surmaiFry),
+    cookingTime: 30,
     servings: 2,
     difficulty: "Easy",
     ingredients: [
-      "250 g prawns, cleaned and deveined",
+      "4 surmai (kingfish) steaks",
       "1 tsp ginger-garlic paste",
-      "1 tsp Malvani masala (or red chilli powder)",
+      "1 1/2 tsp Malvani masala (or red chilli powder)",
       "1/4 tsp turmeric",
-      "1 tsp lemon juice",
+      "1 tsp lemon juice or kokum water",
       "Salt to taste",
-      "3 tbsp fine rava (semolina)",
-      "2 tbsp oil",
+      "4 tbsp fine rava (semolina)",
+      "1 tbsp rice flour",
+      "3 tbsp oil",
     ],
     instructions: [
-      "Mix the prawns with ginger-garlic paste, Malvani masala, turmeric, lemon juice and salt.",
-      "Leave to marinate for 15 minutes.",
-      "Roll each prawn in rava to coat.",
-      "Shallow fry in hot oil for 2–3 minutes per side until crisp and golden.",
-      "Serve hot with lemon wedges and onion rings.",
+      "Rinse and pat the fish dry.",
+      "Mix ginger-garlic paste, Malvani masala, turmeric, lemon juice and salt. Coat the fish and rest for 15 minutes.",
+      "Mix the rava and rice flour on a plate and press each steak into it on both sides.",
+      "Shallow fry in hot oil on medium heat for 3–4 minutes per side until golden and crisp.",
+      "Serve hot with lemon wedges, onion rings and solkadhi.",
     ],
   },
   {
     name: "Ukadiche Modak",
     description: "Steamed modak with a sweet coconut-jaggery filling — Ganpati's favourite.",
-    image: art("ukadiche-modak"),
+    image: commonsPhoto(PHOTOS.modakPuneri),
     cookingTime: 60,
     servings: 4,
     difficulty: "Medium",
@@ -262,40 +279,73 @@ const recipes = [
 ];
 
 /**
- * The very first version of this app shipped a generic sample menu. If that
- * untouched sample data is still in the database, swap it for the KokniSwaad
- * menu once. Items the admin has edited (different image) are left alone, and
- * past orders keep their own copy of names and prices.
+ * Earlier versions of this app shipped different sample menus (a generic one,
+ * then "KokniSwaad" with illustrations and rupee prices). If that untouched
+ * sample data is still in the database, swap it for the current menu once.
+ * Items the admin has edited (different image) are left alone, and past orders
+ * keep their own copy of names and prices.
  */
-const LEGACY_SAMPLE_FOOD = [
-  "Chicken Sandwich",
-  "Beef Burger",
-  "Chicken Wrap",
-  "French Fries",
-  "Caesar Salad",
-  "Fresh Orange Juice",
-  "Bottled Water",
+const OLD_SAMPLES = [
+  {
+    food: [
+      "Chicken Sandwich",
+      "Beef Burger",
+      "Chicken Wrap",
+      "French Fries",
+      "Caesar Salad",
+      "Fresh Orange Juice",
+      "Bottled Water",
+    ],
+    recipes: [
+      "Fluffy Pancakes",
+      "Avocado Toast",
+      "Garlic Butter Pasta",
+      "Veggie Omelette",
+      "Egg Fried Rice",
+      "Berry Smoothie",
+    ],
+    image: { contains: "images.unsplash.com" },
+  },
+  {
+    food: [
+      "Malvani Fish Thali",
+      "Surmai Fry",
+      "Kolambi Masala",
+      "Bangda Curry with Rice",
+      "Bombil Fry",
+      "Kombdi Vade",
+      "Pithla Bhakri",
+      "Kala Vatana Usal with Vade",
+      "Ghavane with Chutney",
+      "Kothimbir Vadi",
+      "Ukadiche Modak (4 pcs)",
+      "Aamras Puri",
+      "Solkadhi",
+      "Kokum Sharbat",
+    ],
+    recipes: [
+      "Solkadhi",
+      "Kokum Sharbat",
+      "Ghavane",
+      "Kokni Batata Bhaji",
+      "Kolambi Fry",
+      "Ukadiche Modak",
+    ],
+    image: { startsWith: "/images/dishes/" },
+  },
 ];
-const LEGACY_SAMPLE_RECIPES = [
-  "Fluffy Pancakes",
-  "Avocado Toast",
-  "Garlic Butter Pasta",
-  "Veggie Omelette",
-  "Egg Fried Rice",
-  "Berry Smoothie",
-];
-const legacyImage = { contains: "images.unsplash.com" };
 
-async function replaceLegacySamples() {
-  const food = await db.foodItem.deleteMany({
-    where: { name: { in: LEGACY_SAMPLE_FOOD }, image: legacyImage },
-  });
-  const recipe = await db.recipe.deleteMany({
-    where: { name: { in: LEGACY_SAMPLE_RECIPES }, image: legacyImage },
-  });
-  if (food.count || recipe.count) {
-    console.log(`✔ Removed old sample data (${food.count} food items, ${recipe.count} recipes)`);
+async function replaceOldSamples() {
+  let food = 0;
+  let recipes = 0;
+  for (const old of OLD_SAMPLES) {
+    food += (await db.foodItem.deleteMany({ where: { name: { in: old.food }, image: old.image } })).count;
+    recipes += (await db.recipe.deleteMany({ where: { name: { in: old.recipes }, image: old.image } })).count;
   }
+  if (food || recipes) {
+    console.log(`✔ Removed old sample data (${food} food items, ${recipes} recipes)`);
+  }
+  return { food, recipes };
 }
 
 async function main() {
@@ -316,17 +366,22 @@ async function main() {
     console.warn("! ADMIN_EMAIL / ADMIN_PASSWORD not set — skipping admin creation");
   }
 
-  await replaceLegacySamples();
+  const removed = await replaceOldSamples();
 
-  if ((await db.foodItem.count()) === 0) {
-    await db.foodItem.createMany({ data: foodItems });
-    console.log(`✔ Added ${foodItems.length} food items`);
+  // Fill an empty menu, or top up the sample menu right after replacing an old one
+  // (items the admin added themselves are kept; names that already exist are skipped).
+  if ((await db.foodItem.count()) === 0 || removed.food > 0) {
+    const existing = new Set((await db.foodItem.findMany({ select: { name: true } })).map((f) => f.name));
+    const toAdd = foodItems.filter((f) => !existing.has(f.name));
+    await db.foodItem.createMany({ data: toAdd });
+    console.log(`✔ Added ${toAdd.length} food items`);
   } else {
     console.log("• Food items already present — skipped");
   }
 
-  if ((await db.recipe.count()) === 0) {
-    for (const r of recipes) {
+  if ((await db.recipe.count()) === 0 || removed.recipes > 0) {
+    const existing = new Set((await db.recipe.findMany({ select: { name: true } })).map((r) => r.name));
+    for (const r of recipes.filter((r) => !existing.has(r.name))) {
       await db.recipe.create({
         data: { ...r, ingredients: r.ingredients.join("\n"), instructions: r.instructions.join("\n") },
       });

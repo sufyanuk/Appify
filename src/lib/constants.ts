@@ -34,4 +34,4 @@ export const DEFAULT_CATEGORIES = [
 
 /** Upper bound per line so a typo can't create an absurd order. */
 export const MAX_QUANTITY_PER_ITEM = 50;
-export const MAX_PRICE_CENTS = 1_000_000; // ₹10,000 (prices are stored in paise)
+export const MAX_PRICE_CENTS = 1_000_000; // QAR 10,000 (prices are stored in dirhams)

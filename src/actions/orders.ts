@@ -9,7 +9,13 @@ import { orderSchema } from "@/lib/validation";
 
 export type SubmitOrderResult =
   | { ok: true; publicId: string; orderNumber: string }
-  | { ok: false; error: string; unavailableIds?: string[] };
+  | {
+      ok: false;
+      error: string;
+      unavailableIds?: string[];
+      /** Set when the problem is with one of the contact fields. */
+      field?: "customerName" | "customerPhone";
+    };
 
 /**
  * Public action: anyone can place an order (no account needed).
@@ -24,9 +30,15 @@ export async function submitOrder(input: unknown): Promise<SubmitOrderResult> {
 
   const parsed = orderSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid order." };
+    const issue = parsed.error.issues[0];
+    const field = issue?.path[0];
+    return {
+      ok: false,
+      error: issue?.message ?? "Invalid order.",
+      field: field === "customerName" || field === "customerPhone" ? field : undefined,
+    };
   }
-  const { customerName, notes } = parsed.data;
+  const { customerName, customerPhone, notes } = parsed.data;
 
   // Merge duplicate lines for the same item.
   const quantities = new Map<string, number>();
@@ -76,6 +88,7 @@ export async function submitOrder(input: unknown): Promise<SubmitOrderResult> {
           // Temporary unique value; replaced below once we know the sequential id.
           orderNumber: `TMP-${crypto.randomUUID()}`,
           customerName,
+          customerPhone,
           notes,
           totalCents,
           items: { create: lines },

@@ -82,6 +82,14 @@ export default async function DashboardPage() {
                     <p className="font-semibold tabular-nums">
                       {order.orderNumber}
                       {order.customerName && <span className="font-normal text-muted"> · {order.customerName}</span>}
+                      {order.customerPhone && (
+                        <a
+                          href={`tel:${order.customerPhone.replace(/[^\d+]/g, "")}`}
+                          className="ml-1 text-sm font-normal text-brand-600 hover:underline"
+                        >
+                          {order.customerPhone}
+                        </a>
+                      )}
                     </p>
                     <p className="mb-1.5 text-xs text-muted">{formatDateTime(order.createdAt)}</p>
                     <OrderItemsList items={order.items} />
