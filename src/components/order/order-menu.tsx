@@ -7,15 +7,20 @@ import type { MenuItem } from "@/lib/data/food";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import { XIcon } from "@/components/ui/icons";
+import { SearchInput } from "@/components/ui/search-input";
+import { EmptyState } from "@/components/ui/empty-state";
+import { matchesSearch } from "@/lib/search";
+import { buildWhatsAppMessage, whatsAppUrl } from "@/lib/whatsapp";
 import { cartActions, useCart } from "./cart-store";
 import { MenuItemCard } from "./menu-item-card";
 import { OrderSummary, type ContactErrors, type SummaryLine } from "./order-summary";
 import { phoneField } from "@/lib/validation";
 
-export function OrderMenu({ items }: { items: MenuItem[] }) {
+export function OrderMenu({ items, whatsAppNumber }: { items: MenuItem[]; whatsAppNumber: string }) {
   const router = useRouter();
   const cart = useCart();
   const [category, setCategory] = useState<string>("All");
+  const [query, setQuery] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [contactErrors, setContactErrors] = useState<ContactErrors>({});
@@ -26,7 +31,11 @@ export function OrderMenu({ items }: { items: MenuItem[] }) {
   const sheetRef = useRef<HTMLDialogElement>(null);
 
   const categories = useMemo(() => ["All", ...new Set(items.map((i) => i.category))], [items]);
-  const visible = category === "All" ? items : items.filter((i) => i.category === category);
+  const visible = items.filter(
+    (i) =>
+      (category === "All" || i.category === category) &&
+      matchesSearch(query, [i.name, i.description, i.category]),
+  );
 
   // Only lines for items that are actually on the (available) menu count.
   const lines: SummaryLine[] = useMemo(
@@ -38,6 +47,13 @@ export function OrderMenu({ items }: { items: MenuItem[] }) {
   );
   const totalCents = lines.reduce((sum, l) => sum + l.priceCents * l.quantity, 0);
   const itemCount = lines.reduce((sum, l) => sum + l.quantity, 0);
+  const whatsAppHref =
+    lines.length > 0
+      ? whatsAppUrl(
+          whatsAppNumber,
+          buildWhatsAppMessage({ lines, totalCents, customerName, customerPhone, notes }),
+        )
+      : null;
 
   // Drop stale cart entries (item removed or made unavailable since last visit).
   useEffect(() => {
@@ -123,12 +139,21 @@ export function OrderMenu({ items }: { items: MenuItem[] }) {
       }}
       onNotesChange={setNotes}
       onSubmit={handleSubmit}
+      whatsAppHref={whatsAppHref}
     />
   );
 
   return (
     <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-8">
       <div>
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          label="Search the menu"
+          placeholder="Search dishes — e.g. biryani, samosa, prawns"
+          className="mb-4"
+        />
+
         {categories.length > 2 && (
           <div className="-mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
             {categories.map((c) => (
@@ -148,16 +173,45 @@ export function OrderMenu({ items }: { items: MenuItem[] }) {
           </div>
         )}
 
-        <div className="grid gap-3 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
-          {visible.map((item) => (
-            <MenuItemCard
-              key={item.id}
-              item={item}
-              quantity={cart[item.id] ?? 0}
-              onChange={(q) => setQuantity(item.id, q)}
-            />
-          ))}
-        </div>
+        {query.trim() && (
+          <p className="mb-3 text-sm text-muted" aria-live="polite">
+            {visible.length === 0
+              ? "No dishes found"
+              : `${visible.length} dish${visible.length === 1 ? "" : "es"} found`}
+            {category !== "All" && ` in ${category}`}
+          </p>
+        )}
+
+        {visible.length === 0 ? (
+          <EmptyState
+            emoji="🔍"
+            title={`No dishes match “${query.trim()}”`}
+            text={category !== "All" ? "Try another word, or search all categories." : "Try another word or check the spelling."}
+            action={
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setCategory("All");
+                }}
+                className="h-11 rounded-full bg-ink px-5 text-sm font-medium text-white hover:bg-stone-700"
+              >
+                Show the full menu
+              </button>
+            }
+          />
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
+            {visible.map((item) => (
+              <MenuItemCard
+                key={item.id}
+                item={item}
+                quantity={cart[item.id] ?? 0}
+                onChange={(q) => setQuantity(item.id, q)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Desktop: sticky order summary */}

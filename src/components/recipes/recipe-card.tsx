@@ -9,14 +9,14 @@ export function RecipeCard({ recipe, priority = false }: { recipe: Recipe; prior
   return (
     <Link
       href={`/recipes/${recipe.id}`}
-      className="group flex flex-col overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-line/60 transition hover:-translate-y-0.5 hover:shadow-float"
+      className="group flex flex-col overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-line/60 transition duration-300 hover:-translate-y-0.5 hover:shadow-float"
     >
       <div className="aspect-[4/3] overflow-hidden">
         <FoodImage
           src={recipe.image}
           alt={recipe.name}
           eager={priority}
-          className="h-full w-full transition duration-500 group-hover:scale-[1.03]"
+          className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-110"
         />
       </div>
       <div className="flex flex-1 flex-col p-5">

@@ -3,7 +3,7 @@
 A simple, mobile-friendly web app for a home kitchen serving Kokni (Konkan, Maharashtra) food. It has two jobs:
 
 1. **Browse easy recipes**: simple Kokni dishes such as solkadhi, ghavane and kolambi fry, with ingredients, numbered steps, time and difficulty.
-2. **Order homemade food**: Malvani fish thali, kombdi vade, surmai fry, modak and more. Choose quantities, give your **name and contact number** (both required), submit and get an order number. No account and no online payment needed (pay on delivery or collection). Prices are in **Qatari riyals (QAR)** and times are shown in Qatar time.
+2. **Order homemade food**: Malvani fish thali, kombdi vade, surmai fry, modak and more. Search the menu, choose quantities, give your **name and contact number** (both required), submit and get an order number, or send the same order straight to the kitchen with **Order via WhatsApp**. No account and no online payment needed (pay on delivery or collection). Prices are in **Qatari riyals (QAR)** and times are shown in Qatar time.
 
 There's also a protected **Admin Dashboard** where you manage the menu, recipes and orders without touching code.
 
@@ -65,6 +65,7 @@ npm run dev            # start the app at http://localhost:3000
 | `ADMIN_EMAIL`     | for seeding | Email of the first admin, created by `npm run setup` / `npm run db:seed`. |
 | `ADMIN_PASSWORD`  | for seeding | Password of the first admin. **Change it after your first login.** |
 | `ADMIN_RENAME_FROM` | optional | An existing admin email to rename to `ADMIN_EMAIL` on the next seed or deploy. The password is kept. |
+| `WHATSAPP_NUMBER` | recommended | The kitchen's WhatsApp number with country code, e.g. `+974 5555 1234`. The **Order via WhatsApp** button sends the customer's order to this number. If it's empty, WhatsApp asks the customer which chat to send it to. |
 
 All secrets stay on the server. Nothing is exposed to the browser (there are no `NEXT_PUBLIC_` variables).
 
@@ -177,6 +178,7 @@ The project includes a `vercel-build` script. On every deploy it creates or upda
 3. **Add environment variables** under **Settings → Environment Variables**:
    - `SESSION_SECRET`: from `openssl rand -base64 32`.
    - `ADMIN_EMAIL` and `ADMIN_PASSWORD`: your first admin login. Change the password in Admin → Settings after you sign in.
+   - `WHATSAPP_NUMBER`: the number that receives WhatsApp orders.
 4. **Set the Build Command** under **Settings → Build & Deployment** to `npm run vercel-build`, then **redeploy**.
 
 Any other Node host (Railway, Render, Fly.io, a VPS) works too: run `npm run setup` once against the database, then `npm run build && npm start`.

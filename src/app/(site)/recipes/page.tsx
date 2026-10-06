@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { RecipeCard } from "@/components/recipes/recipe-card";
+import { RecipeList } from "@/components/recipes/recipe-list";
 import { PageHeader } from "@/components/site/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getRecipes } from "@/lib/data/recipes";
@@ -22,11 +22,7 @@ export default async function RecipesPage() {
           <EmptyState emoji="📖" title="No recipes yet" text="Check back soon for new ideas." />
         </div>
       ) : (
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {recipes.map((recipe, i) => (
-            <RecipeCard key={recipe.id} recipe={recipe} priority={i < 3} />
-          ))}
-        </div>
+        <RecipeList recipes={recipes} />
       )}
     </div>
   );

@@ -44,7 +44,9 @@ export default async function AdminRecipesPage() {
         <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-line/60">
           {recipes.map((r) => (
             <li key={r.id} className="flex items-center gap-4 px-4 py-3 sm:px-5">
-              <FoodImage src={r.image} alt="" className="h-14 w-14 shrink-0 rounded-xl text-2xl" />
+              <div className="group h-14 w-14 shrink-0 overflow-hidden rounded-xl">
+                <FoodImage src={r.image} alt="" className="h-full w-full text-2xl transition-transform duration-300 ease-out group-hover:scale-125" />
+              </div>
               <div className="min-w-0 flex-1">
                 <Link href={`/recipes/${r.id}`} className="font-medium hover:underline" target="_blank">
                   {r.name}

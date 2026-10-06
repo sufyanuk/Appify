@@ -3,7 +3,7 @@
 import { formatPrice } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea, errorProps } from "@/components/ui/field";
-import { BagIcon } from "@/components/ui/icons";
+import { BagIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { QuantityStepper } from "./quantity-stepper";
 
 export type SummaryLine = { id: string; name: string; priceCents: number; quantity: number };
@@ -24,6 +24,7 @@ export function OrderSummary({
   onCustomerPhoneChange,
   onNotesChange,
   onSubmit,
+  whatsAppHref,
   idPrefix,
 }: {
   lines: SummaryLine[];
@@ -39,6 +40,8 @@ export function OrderSummary({
   onCustomerPhoneChange: (v: string) => void;
   onNotesChange: (v: string) => void;
   onSubmit: () => void;
+  /** wa.me link with the order pre-filled (null when the cart is empty). */
+  whatsAppHref: string | null;
   idPrefix: string;
 }) {
   const empty = lines.length === 0;
@@ -151,6 +154,21 @@ export function OrderSummary({
       <Button type="submit" size="lg" className="mt-4 w-full" disabled={empty || pending}>
         {pending ? "Submitting…" : "Submit order"}
       </Button>
+      {whatsAppHref && (
+        <>
+          <div className="my-3 flex items-center gap-3 text-xs text-muted" aria-hidden="true">
+            <span className="h-px flex-1 bg-line" /> or <span className="h-px flex-1 bg-line" />
+          </div>
+          <a
+            href={whatsAppHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-[#1fa855] px-6 text-base font-medium text-white transition-colors hover:bg-[#178a45] focus-visible:outline-[#1fa855]"
+          >
+            <WhatsAppIcon width={22} height={22} /> Order via WhatsApp
+          </a>
+        </>
+      )}
       <p className="mt-2 text-center text-xs text-muted">No payment needed now — pay on delivery or collection.</p>
     </form>
   );

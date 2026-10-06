@@ -40,14 +40,14 @@ export default function HomePage() {
           <Link
             key={href}
             href={href}
-            className="group overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-line/60 transition hover:-translate-y-0.5 hover:shadow-float"
+            className="group overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-line/60 transition duration-300 hover:-translate-y-0.5 hover:shadow-float"
           >
             <div className="relative aspect-[16/10] overflow-hidden">
               <FoodImage
                 src={image}
                 alt=""
                 eager={i === 0}
-                className="h-full w-full transition duration-500 group-hover:scale-[1.03]"
+                className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-110"
               />
             </div>
             <div className="flex items-center gap-4 p-5 sm:p-6">

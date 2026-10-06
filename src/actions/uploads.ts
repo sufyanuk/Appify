@@ -6,10 +6,10 @@ import { requireAdmin } from "@/lib/auth/session";
 export type UploadResult = { ok: true; url: string } | { ok: false; error: string };
 
 const MAX_BYTES = 3.5 * 1024 * 1024;
-const ALLOWED = ["image/jpeg", "image/png", "image/webp"] as const;
+type ImageType = "image/jpeg" | "image/png" | "image/webp";
 
 /** Check the file's first bytes really are a JPEG, PNG or WebP image. */
-function sniff(bytes: Uint8Array): (typeof ALLOWED)[number] | null {
+function sniff(bytes: Uint8Array): ImageType | null {
   if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
   if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "image/png";
   const riff = String.fromCharCode(...bytes.slice(0, 4));

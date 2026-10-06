@@ -20,12 +20,16 @@ export function MenuItemCard({
   return (
     <div
       className={cn(
-        "flex gap-4 rounded-3xl bg-white p-3 shadow-card ring-1 transition sm:flex-col sm:gap-0 sm:p-0",
+        "group flex gap-4 overflow-hidden rounded-3xl bg-white p-3 shadow-card ring-1 transition duration-300 hover:-translate-y-0.5 hover:shadow-float sm:flex-col sm:gap-0 sm:p-0",
         selected ? "ring-2 ring-ink" : "ring-line/60",
       )}
     >
       <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl sm:aspect-[4/3] sm:h-auto sm:w-full sm:rounded-none">
-        <FoodImage src={item.image} alt={item.name} className="h-full w-full" />
+        <FoodImage
+          src={item.image}
+          alt={item.name}
+          className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-110"
+        />
       </div>
       <div className="flex min-w-0 flex-1 flex-col sm:p-4">
         <h3 className="font-semibold leading-snug">{item.name}</h3>

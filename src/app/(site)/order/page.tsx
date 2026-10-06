@@ -3,6 +3,7 @@ import { OrderMenu } from "@/components/order/order-menu";
 import { PageHeader } from "@/components/site/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getAvailableFoodItems } from "@/lib/data/food";
+import { cleanWhatsAppNumber } from "@/lib/whatsapp";
 
 export const metadata: Metadata = { title: "Order food" };
 
@@ -27,7 +28,7 @@ export default async function OrderPage() {
             text="Please check back a little later."
           />
         ) : (
-          <OrderMenu items={items} />
+          <OrderMenu items={items} whatsAppNumber={cleanWhatsAppNumber(process.env.WHATSAPP_NUMBER)} />
         )}
       </div>
     </div>

@@ -60,7 +60,9 @@ export default async function AdminFoodPage() {
                 <tr key={item.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-3 px-4 py-3 md:table-row md:p-0">
                   <td className="row-span-2 md:px-5 md:py-3">
                     <div className="flex items-center gap-3">
-                      <FoodImage src={item.image} alt="" className="h-14 w-14 shrink-0 rounded-xl text-2xl" />
+                      <div className="group h-14 w-14 shrink-0 overflow-hidden rounded-xl">
+                <FoodImage src={item.image} alt="" className="h-full w-full text-2xl transition-transform duration-300 ease-out group-hover:scale-125" />
+              </div>
                       <div className="hidden min-w-0 md:block">
                         <p className="font-medium">{item.name}</p>
                         <p className="max-w-xs truncate text-xs text-muted">{item.description}</p>
