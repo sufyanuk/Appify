@@ -13,8 +13,8 @@ export default async function OrderPage() {
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
       <PageHeader
         eyebrow="Menu"
-        title="Order food"
-        description="Choose your items and quantities, then submit your order."
+        title="Order homemade food"
+        description="Freshly cooked at home every day. Choose your dishes and quantities, then submit your order."
       />
       <div className="mt-6 sm:mt-8">
         {items.length === 0 ? (

@@ -21,16 +21,17 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
 export const DIFFICULTIES = ["Easy", "Medium", "Hard"] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
 
+/** Menu sections, in the order customers see them. */
 export const DEFAULT_CATEGORIES = [
-  "Sandwiches",
-  "Burgers",
-  "Wraps",
-  "Sides",
-  "Salads",
+  "Thali",
+  "Seafood",
+  "Chicken",
+  "Vegetarian",
+  "Snacks",
+  "Sweets",
   "Drinks",
-  "Desserts",
 ];
 
 /** Upper bound per line so a typo can't create an absurd order. */
 export const MAX_QUANTITY_PER_ITEM = 50;
-export const MAX_PRICE_CENTS = 1_000_000; // $10,000
+export const MAX_PRICE_CENTS = 1_000_000; // ₹10,000 (prices are stored in paise)

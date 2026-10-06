@@ -1,9 +1,9 @@
-# Appify — Easy Recipes & Food Ordering
+# KokniSwaad (कोकणी स्वाद): Homemade Kokni Food
 
-A simple, modern web app with two jobs:
+A simple, mobile-friendly web app for a home kitchen serving Kokni (Konkan, Maharashtra) food. It has two jobs:
 
-1. **Browse easy recipes**: ingredients, numbered steps, time and difficulty.
-2. **Order food**: choose items and quantities, review, submit, get an order number. No account and no payment needed.
+1. **Browse easy recipes**: simple Kokni dishes such as solkadhi, ghavane and kolambi fry, with ingredients, numbered steps, time and difficulty.
+2. **Order homemade food**: Malvani fish thali, kombdi vade, surmai fry, modak and more. Choose quantities, review, submit and get an order number. No account and no online payment needed (pay on delivery or collection). Prices are in ₹ and times are shown in Indian Standard Time.
 
 There's also a protected **Admin Dashboard** where you manage the menu, recipes and orders without touching code.
 
@@ -32,7 +32,7 @@ Requirements: **Node.js 20+** and a **PostgreSQL** database. Either option works
 ```bash
 npm install            # install dependencies (also generates the Prisma client)
 cp .env.example .env   # then edit .env: set DATABASE_URL and SESSION_SECRET (see below)
-npm run setup          # create the database tables and load sample data + admin user
+npm run setup          # create the database tables and load the sample Kokni menu, recipes + admin user
 npm run dev            # start the app at http://localhost:3000
 ```
 
@@ -182,7 +182,8 @@ Any other Node host (Railway, Render, Fly.io, a VPS) works too: run `npm run set
 
 ## Possible future improvements
 
-- **Image uploads.** Admins currently paste an image URL. Uploads could go to Vercel Blob, S3 or Supabase Storage.
+- **Photo uploads.** Every sample dish uses a built-in illustration from `public/images/dishes/`. Admins can paste a link to a real photo of their own cooking. Direct uploads could go to Vercel Blob.
+- **Phone number and delivery address fields** on the order form. Customers can already add these in the order notes.
 - **Live order updates.** The admin orders list and the customer confirmation page could poll for or stream status changes.
 - **Shared rate limiting.** Swap the in-memory limiter for Upstash Redis when running on multiple instances.
 - **Order notifications.** Email or SMS the kitchen when an order arrives, and the customer when it's ready.

@@ -2,13 +2,18 @@ import Link from "next/link";
 
 export function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-500 text-white">
+    <Link href="/" className="flex items-center gap-2.5" aria-label="KokniSwaad home">
+      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-white">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
           <path d="M4 13h16a8 8 0 0 1-16 0ZM8 9c0-2 1.5-2 1.5-4M12 9c0-2 1.5-2 1.5-4M16 9c0-2 1.5-2 1.5-4" />
         </svg>
       </span>
-      Appify
+      <span className="flex flex-col leading-none">
+        <span className="text-lg font-semibold tracking-tight">KokniSwaad</span>
+        <span className="mt-0.5 text-[11px] font-medium text-brand-600" lang="mr">
+          कोकणी स्वाद
+        </span>
+      </span>
     </Link>
   );
 }
@@ -35,7 +40,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-auto border-t border-line/70">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs text-muted sm:flex-row sm:px-6">
-        <p>© {new Date().getFullYear()} Appify. Made with care.</p>
+        <p>© {new Date().getFullYear()} KokniSwaad · Homemade Kokni food, cooked with love.</p>
         <Link href="/admin" className="hover:text-ink">
           Staff login
         </Link>

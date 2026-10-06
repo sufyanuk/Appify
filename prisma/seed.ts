@@ -1,205 +1,302 @@
 /**
- * Seeds the database with sample menu items, easy recipes and the admin user.
- * Run with: npm run db:seed   (safe to re-run — it only fills empty tables)
+ * Seeds the database with the KokniSwaad sample menu, easy Kokni recipes and
+ * the admin user. Run with: npm run db:seed   (safe to re-run — it only fills
+ * empty tables, so your own edits are never overwritten)
  */
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const db = new PrismaClient();
 
-const img = (id: string) => `https://images.unsplash.com/${id}?w=800&q=75&auto=format&fit=crop`;
+/** Built-in illustrations live in public/images/dishes. */
+const art = (name: string) => `/images/dishes/${name}.svg`;
 
+// Prices are in paise (₹1 = 100 paise).
 const foodItems = [
   {
-    name: "Chicken Sandwich",
-    description: "Crispy chicken breast, lettuce, pickles and house mayo on a toasted brioche bun.",
-    priceCents: 500,
-    category: "Sandwiches",
-    image: img("photo-1606755962773-d324e0a13086"),
+    name: "Malvani Fish Thali",
+    description: "Surmai fry, Malvani fish curry, solkadhi, rice and tandlachi bhakri.",
+    priceCents: 35000,
+    category: "Thali",
+    image: art("malvani-fish-thali"),
   },
   {
-    name: "Beef Burger",
-    description: "Juicy beef patty, cheddar, tomato, onion and our signature sauce.",
-    priceCents: 750,
-    category: "Burgers",
-    image: img("photo-1568901346375-23c9450c58cd"),
+    name: "Surmai Fry",
+    description: "Kingfish steaks in a spicy Malvani masala, shallow-fried in a rava crust.",
+    priceCents: 32000,
+    category: "Seafood",
+    image: art("surmai-fry"),
   },
   {
-    name: "Chicken Wrap",
-    description: "Grilled chicken, crunchy salad and garlic yoghurt wrapped in a warm tortilla.",
-    priceCents: 600,
-    category: "Wraps",
-    image: img("photo-1626700051175-6818013e1d4f"),
+    name: "Kolambi Masala",
+    description: "Prawns simmered in a rich coconut and Malvani masala gravy.",
+    priceCents: 30000,
+    category: "Seafood",
+    image: art("kolambi-masala"),
   },
   {
-    name: "French Fries",
-    description: "Golden, crispy and lightly salted.",
-    priceCents: 300,
-    category: "Sides",
-    image: img("photo-1573080496219-bb080dd4f877"),
+    name: "Bangda Curry with Rice",
+    description: "Mackerel in a tangy kokum and coconut curry, served with steamed rice.",
+    priceCents: 24000,
+    category: "Seafood",
+    image: art("bangda-curry"),
   },
   {
-    name: "Caesar Salad",
-    description: "Romaine, parmesan, croutons and creamy Caesar dressing.",
-    priceCents: 400,
-    category: "Salads",
-    image: img("photo-1550304943-4f24f54ddde9"),
+    name: "Bombil Fry",
+    description: "Crispy rava-fried Bombay duck — a Konkan coast favourite.",
+    priceCents: 22000,
+    category: "Seafood",
+    image: art("bombil-fry"),
   },
   {
-    name: "Fresh Orange Juice",
-    description: "Freshly squeezed oranges. Nothing else.",
-    priceCents: 300,
+    name: "Kombdi Vade",
+    description: "Malvani chicken curry with soft, puffed vade made from rice and urad flour.",
+    priceCents: 28000,
+    category: "Chicken",
+    image: art("kombdi-vade"),
+  },
+  {
+    name: "Pithla Bhakri",
+    description: "Comforting besan pithla with jowar bhakri, onion and green chilli.",
+    priceCents: 15000,
+    category: "Vegetarian",
+    image: art("pithla-bhakri"),
+  },
+  {
+    name: "Kala Vatana Usal with Vade",
+    description: "Black peas in roasted coconut masala with two Malvani vade.",
+    priceCents: 16000,
+    category: "Vegetarian",
+    image: art("kala-vatana-usal"),
+  },
+  {
+    name: "Ghavane with Chutney",
+    description: "Soft, lacy rice-flour pancakes with fresh coconut chutney.",
+    priceCents: 9000,
+    category: "Snacks",
+    image: art("ghavane-chutney"),
+  },
+  {
+    name: "Kothimbir Vadi",
+    description: "Crisp coriander and besan squares with green chutney.",
+    priceCents: 10000,
+    category: "Snacks",
+    image: art("kothimbir-vadi"),
+  },
+  {
+    name: "Ukadiche Modak (4 pcs)",
+    description: "Steamed rice-flour modak filled with coconut and jaggery.",
+    priceCents: 16000,
+    category: "Sweets",
+    image: art("ukadiche-modak"),
+  },
+  {
+    name: "Aamras Puri",
+    description: "Sweet Alphonso mango pulp with two hot puris (seasonal).",
+    priceCents: 12000,
+    category: "Sweets",
+    image: art("aamras-puri"),
+  },
+  {
+    name: "Solkadhi",
+    description: "Cooling kokum and coconut milk drink — the perfect end to a Kokni meal.",
+    priceCents: 6000,
     category: "Drinks",
-    image: img("photo-1600271886742-f049cd451bba"),
+    image: art("solkadhi"),
   },
   {
-    name: "Bottled Water",
-    description: "Still mineral water, 500 ml.",
-    priceCents: 150,
+    name: "Kokum Sharbat",
+    description: "Sweet and tangy kokum cooler, served chilled.",
+    priceCents: 5000,
     category: "Drinks",
-    image: img("photo-1523362628745-0c100150b504"),
+    image: art("kokum-sharbat"),
   },
 ];
 
 const recipes = [
   {
-    name: "Fluffy Pancakes",
-    description: "Light, golden pancakes ready in 20 minutes — perfect for a lazy breakfast.",
-    image: img("photo-1567620905732-2d1ec7ab7445"),
-    cookingTime: 20,
+    name: "Solkadhi",
+    description: "The pink, cooling kokum and coconut drink served after every Kokni meal.",
+    image: art("solkadhi"),
+    cookingTime: 25,
     servings: 4,
     difficulty: "Easy",
     ingredients: [
-      "1 cup (125 g) plain flour",
-      "1 tbsp sugar",
-      "2 tsp baking powder",
-      "Pinch of salt",
-      "1 cup (240 ml) milk",
-      "1 egg",
-      "2 tbsp melted butter",
+      "8–10 dried kokum petals",
+      "1 cup warm water",
+      "2 cups thick coconut milk",
+      "1 small garlic clove, crushed",
+      "1 green chilli, slit",
+      "Salt to taste",
+      "Pinch of sugar (optional)",
+      "Chopped coriander to garnish",
     ],
     instructions: [
-      "Whisk the flour, sugar, baking powder and salt in a bowl.",
-      "In another bowl, whisk the milk, egg and melted butter.",
-      "Pour the wet mix into the dry mix and stir until just combined — a few lumps are fine.",
-      "Heat a lightly oiled pan over medium heat.",
-      "Pour 1/4 cup of batter per pancake. Flip when bubbles appear, about 2 minutes per side.",
-      "Serve warm with maple syrup or fresh fruit.",
+      "Soak the kokum petals in 1 cup warm water for 20 minutes.",
+      "Squeeze the petals well into the water to release the colour, then strain.",
+      "Stir the kokum water into the coconut milk until it turns a soft pink.",
+      "Add the garlic, green chilli, salt and a pinch of sugar. Mix well.",
+      "Chill for 10 minutes, garnish with coriander and serve cold.",
     ],
   },
   {
-    name: "Avocado Toast",
-    description: "Creamy avocado on crunchy toast with a squeeze of lemon and chilli flakes.",
-    image: img("photo-1541519227354-08fa5d50c44d"),
-    cookingTime: 10,
-    servings: 2,
-    difficulty: "Easy",
-    ingredients: [
-      "2 slices sourdough bread",
-      "1 ripe avocado",
-      "1/2 lemon",
-      "Salt and black pepper",
-      "Chilli flakes (optional)",
-      "Olive oil",
-    ],
-    instructions: [
-      "Toast the bread until golden.",
-      "Mash the avocado with lemon juice, salt and pepper.",
-      "Spread the avocado over the toast.",
-      "Finish with a drizzle of olive oil and chilli flakes.",
-    ],
-  },
-  {
-    name: "Garlic Butter Pasta",
-    description: "A five-ingredient weeknight pasta that tastes far better than it should.",
-    image: img("photo-1621996346565-e3dbc646d9a9"),
-    cookingTime: 15,
-    servings: 2,
-    difficulty: "Easy",
-    ingredients: [
-      "200 g spaghetti",
-      "3 tbsp butter",
-      "4 garlic cloves, finely chopped",
-      "Handful of parsley, chopped",
-      "40 g grated parmesan",
-      "Salt and pepper",
-    ],
-    instructions: [
-      "Cook the spaghetti in salted boiling water until al dente. Save a cup of pasta water.",
-      "Melt the butter in a pan over low heat and gently cook the garlic for 1–2 minutes.",
-      "Add the drained pasta and a splash of pasta water; toss well.",
-      "Stir in the parmesan and parsley. Season and serve immediately.",
-    ],
-  },
-  {
-    name: "Veggie Omelette",
-    description: "A protein-packed omelette loaded with colourful vegetables.",
-    image: img("photo-1510693206972-df098062cb71"),
-    cookingTime: 12,
-    servings: 1,
-    difficulty: "Easy",
-    ingredients: [
-      "3 eggs",
-      "2 tbsp milk",
-      "1/4 bell pepper, diced",
-      "Handful of spinach",
-      "2 mushrooms, sliced",
-      "2 tbsp grated cheese",
-      "1 tsp butter",
-      "Salt and pepper",
-    ],
-    instructions: [
-      "Whisk the eggs, milk, salt and pepper.",
-      "Melt the butter in a non-stick pan and cook the vegetables for 2–3 minutes.",
-      "Pour in the eggs and let them set gently, lifting the edges as they cook.",
-      "Sprinkle over the cheese, fold in half and slide onto a plate.",
-    ],
-  },
-  {
-    name: "Egg Fried Rice",
-    description: "Turn leftover rice into a quick, satisfying meal in one pan.",
-    image: img("photo-1603133872878-684f208fb84b"),
-    cookingTime: 15,
-    servings: 2,
-    difficulty: "Easy",
-    ingredients: [
-      "2 cups cooked rice (preferably day-old)",
-      "2 eggs",
-      "1 cup frozen peas and carrots",
-      "2 spring onions, sliced",
-      "2 tbsp soy sauce",
-      "1 tbsp vegetable oil",
-      "1 tsp sesame oil",
-    ],
-    instructions: [
-      "Heat the vegetable oil in a large pan or wok over high heat.",
-      "Add the peas and carrots and stir-fry for 2 minutes.",
-      "Push the veg aside, crack in the eggs and scramble.",
-      "Add the rice and soy sauce and stir-fry for 3–4 minutes.",
-      "Finish with sesame oil and spring onions.",
-    ],
-  },
-  {
-    name: "Berry Smoothie",
-    description: "A bright, refreshing smoothie that takes five minutes.",
-    image: img("photo-1505252585461-04db1eb84625"),
+    name: "Kokum Sharbat",
+    description: "A quick, refreshing summer cooler made from kokum syrup.",
+    image: art("kokum-sharbat"),
     cookingTime: 5,
     servings: 2,
     difficulty: "Easy",
     ingredients: [
-      "1 cup frozen mixed berries",
-      "1 banana",
-      "1 cup (240 ml) milk or almond milk",
-      "1/2 cup Greek yoghurt",
-      "1 tsp honey",
+      "4 tbsp kokum syrup (agal)",
+      "2 cups chilled water",
+      "1/2 tsp roasted cumin powder",
+      "Pinch of black salt",
+      "Ice cubes",
+      "Mint leaves to garnish",
     ],
     instructions: [
-      "Add everything to a blender.",
-      "Blend until smooth, about 1 minute.",
-      "Taste, add more honey if you like, and serve.",
+      "Add the kokum syrup to a jug of chilled water.",
+      "Stir in the roasted cumin powder and black salt.",
+      "Taste and add a little more syrup if you like it sweeter.",
+      "Pour over ice, garnish with mint and serve.",
+    ],
+  },
+  {
+    name: "Ghavane",
+    description: "Soft, lacy Konkan rice-flour pancakes — ready in 15 minutes.",
+    image: art("ghavane-chutney"),
+    cookingTime: 15,
+    servings: 2,
+    difficulty: "Easy",
+    ingredients: [
+      "1 cup rice flour",
+      "1 1/4 cups water (approx.)",
+      "Salt to taste",
+      "1/4 tsp cumin seeds (optional)",
+      "Oil or ghee for the pan",
+    ],
+    instructions: [
+      "Whisk the rice flour, salt and cumin with water into a thin, lump-free batter.",
+      "Heat a non-stick tawa on medium and grease it lightly.",
+      "Pour a ladle of batter from the edges inward so it spreads into a thin, lacy pancake.",
+      "Cover and cook for 1–2 minutes until the top is set. No need to flip.",
+      "Serve hot with coconut chutney or a little ghee and jaggery.",
+    ],
+  },
+  {
+    name: "Kokni Batata Bhaji",
+    description: "Simple potato bhaji with mustard, curry leaves and fresh coconut.",
+    image: art("batata-bhaji"),
+    cookingTime: 20,
+    servings: 3,
+    difficulty: "Easy",
+    ingredients: [
+      "3 potatoes, boiled and cubed",
+      "1 tbsp oil",
+      "1/2 tsp mustard seeds",
+      "8–10 curry leaves",
+      "2 green chillies, chopped",
+      "1/4 tsp turmeric",
+      "2 tbsp fresh grated coconut",
+      "Salt to taste",
+      "Chopped coriander",
+    ],
+    instructions: [
+      "Heat oil in a kadhai and add mustard seeds. Let them splutter.",
+      "Add curry leaves, green chillies and turmeric. Stir for a few seconds.",
+      "Add the potatoes and salt and toss gently for 3–4 minutes.",
+      "Mix in the grated coconut and coriander.",
+      "Serve hot with bhakri, chapati or as a side with varan bhaat.",
+    ],
+  },
+  {
+    name: "Kolambi Fry",
+    description: "Spicy, crispy prawn fry — Konkan coast style.",
+    image: art("kolambi-fry"),
+    cookingTime: 25,
+    servings: 2,
+    difficulty: "Easy",
+    ingredients: [
+      "250 g prawns, cleaned and deveined",
+      "1 tsp ginger-garlic paste",
+      "1 tsp Malvani masala (or red chilli powder)",
+      "1/4 tsp turmeric",
+      "1 tsp lemon juice",
+      "Salt to taste",
+      "3 tbsp fine rava (semolina)",
+      "2 tbsp oil",
+    ],
+    instructions: [
+      "Mix the prawns with ginger-garlic paste, Malvani masala, turmeric, lemon juice and salt.",
+      "Leave to marinate for 15 minutes.",
+      "Roll each prawn in rava to coat.",
+      "Shallow fry in hot oil for 2–3 minutes per side until crisp and golden.",
+      "Serve hot with lemon wedges and onion rings.",
+    ],
+  },
+  {
+    name: "Ukadiche Modak",
+    description: "Steamed modak with a sweet coconut-jaggery filling — Ganpati's favourite.",
+    image: art("ukadiche-modak"),
+    cookingTime: 60,
+    servings: 4,
+    difficulty: "Medium",
+    ingredients: [
+      "1 cup fresh grated coconut",
+      "3/4 cup grated jaggery",
+      "1/4 tsp cardamom powder",
+      "1 cup rice flour",
+      "1 cup water",
+      "1 tsp ghee",
+      "Pinch of salt",
+    ],
+    instructions: [
+      "Cook the coconut and jaggery in a pan for 5–7 minutes until sticky. Add cardamom and let it cool.",
+      "Boil the water with ghee and salt, add the rice flour, stir, cover and rest for 5 minutes.",
+      "Knead the warm dough until smooth, using wet hands.",
+      "Flatten a small ball of dough into a cup, fill with the coconut mixture and pinch pleats to close at the top.",
+      "Steam the modak on a greased plate or banana leaf for 10–12 minutes.",
+      "Serve warm with a spoon of ghee on top.",
     ],
   },
 ];
+
+/**
+ * The very first version of this app shipped a generic sample menu. If that
+ * untouched sample data is still in the database, swap it for the KokniSwaad
+ * menu once. Items the admin has edited (different image) are left alone, and
+ * past orders keep their own copy of names and prices.
+ */
+const LEGACY_SAMPLE_FOOD = [
+  "Chicken Sandwich",
+  "Beef Burger",
+  "Chicken Wrap",
+  "French Fries",
+  "Caesar Salad",
+  "Fresh Orange Juice",
+  "Bottled Water",
+];
+const LEGACY_SAMPLE_RECIPES = [
+  "Fluffy Pancakes",
+  "Avocado Toast",
+  "Garlic Butter Pasta",
+  "Veggie Omelette",
+  "Egg Fried Rice",
+  "Berry Smoothie",
+];
+const legacyImage = { contains: "images.unsplash.com" };
+
+async function replaceLegacySamples() {
+  const food = await db.foodItem.deleteMany({
+    where: { name: { in: LEGACY_SAMPLE_FOOD }, image: legacyImage },
+  });
+  const recipe = await db.recipe.deleteMany({
+    where: { name: { in: LEGACY_SAMPLE_RECIPES }, image: legacyImage },
+  });
+  if (food.count || recipe.count) {
+    console.log(`✔ Removed old sample data (${food.count} food items, ${recipe.count} recipes)`);
+  }
+}
 
 async function main() {
   // Admin user
@@ -218,6 +315,8 @@ async function main() {
   } else {
     console.warn("! ADMIN_EMAIL / ADMIN_PASSWORD not set — skipping admin creation");
   }
+
+  await replaceLegacySamples();
 
   if ((await db.foodItem.count()) === 0) {
     await db.foodItem.createMany({ data: foodItems });

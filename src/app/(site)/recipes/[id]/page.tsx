@@ -77,7 +77,7 @@ export default async function RecipePage({ params }: PageProps<"/recipes/[id]">)
 
       <div className="mt-14 flex flex-col items-center gap-3 rounded-3xl bg-brand-50 px-6 py-8 text-center">
         <p className="font-medium">Not in the mood to cook?</p>
-        <ButtonLink href="/order">Order food instead</ButtonLink>
+        <ButtonLink href="/order">Order homemade food instead</ButtonLink>
       </div>
     </article>
   );

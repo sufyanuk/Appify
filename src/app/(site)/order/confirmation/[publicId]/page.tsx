@@ -81,7 +81,7 @@ export default async function ConfirmationPage({
           </div>
         )}
         <p className="border-t border-line px-5 py-3 text-xs text-muted">
-          Placed {formatDateTime(order.createdAt)} · Pay on collection
+          Placed {formatDateTime(order.createdAt)} · Pay on delivery or collection
         </p>
       </div>
 

@@ -7,7 +7,7 @@ import { LogoutIcon } from "@/components/ui/icons";
 import { requireAdmin } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
-  title: { default: "Admin", template: "%s · Admin · Appify" },
+  title: { default: "Admin", template: "%s · Admin · KokniSwaad" },
   robots: { index: false },
 };
 

@@ -34,7 +34,7 @@ export function RecipeForm({
           required
           maxLength={100}
           defaultValue={v("name", recipe?.name ?? "")}
-          placeholder="e.g. Fluffy Pancakes"
+          placeholder="e.g. Solkadhi"
           {...errorProps("name", errors.name)}
         />
       </Field>
@@ -102,7 +102,7 @@ export function RecipeForm({
           rows={7}
           required
           defaultValue={v("ingredients", recipe?.ingredients ?? "")}
-          placeholder={"2 eggs\n1 cup milk\nPinch of salt"}
+          placeholder={"1 cup coconut milk\n6–8 kokum petals\nSalt to taste"}
           {...errorProps("ingredients", errors.ingredients)}
         />
       </Field>
@@ -114,7 +114,7 @@ export function RecipeForm({
           rows={8}
           required
           defaultValue={v("instructions", recipe?.instructions ?? "")}
-          placeholder={"Whisk the eggs and milk.\nCook in a hot pan for 2 minutes."}
+          placeholder={"Soak the kokum in warm water for 20 minutes.\nMix with coconut milk and season."}
           {...errorProps("instructions", errors.instructions)}
         />
       </Field>

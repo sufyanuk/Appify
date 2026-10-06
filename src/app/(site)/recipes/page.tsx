@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/site/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getRecipes } from "@/lib/data/recipes";
 
-export const metadata: Metadata = { title: "Easy recipes" };
+export const metadata: Metadata = { title: "Easy Kokni recipes" };
 
 export default async function RecipesPage() {
   const recipes = await getRecipes();
@@ -13,8 +13,8 @@ export default async function RecipesPage() {
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <PageHeader
         eyebrow="Recipes"
-        title="Easy recipes"
-        description="Quick, simple dishes with everyday ingredients."
+        title="Easy Kokni recipes"
+        description="Simple Konkan home cooking with everyday ingredients."
       />
 
       {recipes.length === 0 ? (

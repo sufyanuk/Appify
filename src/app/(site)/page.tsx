@@ -6,17 +6,15 @@ const choices = [
   {
     href: "/recipes",
     title: "Browse Easy Recipes",
-    text: "Simple dishes you can make at home in minutes.",
-    image:
-      "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1000&q=75&auto=format&fit=crop",
+    text: "Simple Kokni dishes to cook in your own kitchen.",
+    image: "/images/dishes/home-recipes.svg",
     icon: BookIcon,
   },
   {
     href: "/order",
     title: "Order Food Items",
-    text: "Pick your favourites, choose quantities, done.",
-    image:
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1000&q=75&auto=format&fit=crop",
+    text: "Fresh homemade thalis, seafood, vade and more.",
+    image: "/images/dishes/home-order.svg",
     icon: BagIcon,
   },
 ];
@@ -25,12 +23,14 @@ export default function HomePage() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6 sm:pt-16">
       <section className="mx-auto max-w-2xl text-center">
-        <p className="text-sm font-medium text-brand-600">Hungry? Let&apos;s fix that.</p>
+        <p className="text-sm font-medium text-brand-600">
+          <span lang="mr">घरगुती कोकणी जेवण</span> · Homemade Kokni food
+        </p>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-          What would you like to do today?
+          The taste of the Konkan, cooked at home
         </h1>
         <p className="mt-4 text-base text-muted sm:text-lg">
-          Cook something easy yourself, or let us cook for you.
+          Order today&apos;s homemade dishes, or learn to cook easy Kokni recipes yourself.
         </p>
       </section>
 

@@ -1,21 +1,30 @@
-const currency = new Intl.NumberFormat("en-US", {
+// Formatting for an Indian audience: rupees and Indian Standard Time.
+const wholeRupees = new Intl.NumberFormat("en-IN", {
   style: "currency",
-  currency: "USD",
+  currency: "INR",
+  maximumFractionDigits: 0,
+});
+const rupeesAndPaise = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  minimumFractionDigits: 2,
 });
 
-export function formatPrice(cents: number): string {
-  return currency.format(cents / 100);
+/** Paise → "₹1,250" or "₹99.50". */
+export function formatPrice(paise: number): string {
+  return (paise % 100 === 0 ? wholeRupees : rupeesAndPaise).format(paise / 100);
 }
 
-/** Cents → "12.50" for editing in a form input. */
-export function centsToInput(cents: number): string {
-  return (cents / 100).toFixed(2);
+/** Paise → "250" or "99.50" for editing in a form input. */
+export function centsToInput(paise: number): string {
+  return paise % 100 === 0 ? String(paise / 100) : (paise / 100).toFixed(2);
 }
 
 export function formatDateTime(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: "Asia/Kolkata",
   }).format(date);
 }
 

@@ -38,22 +38,22 @@ export function FoodForm({
           required
           maxLength={100}
           defaultValue={v("name", item?.name ?? "")}
-          placeholder="e.g. Chicken Sandwich"
+          placeholder="e.g. Kombdi Vade"
           {...errorProps("name", errors.name)}
         />
       </Field>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Price (USD)" htmlFor="price" errors={errors.price}>
+        <Field label="Price (₹)" htmlFor="price" errors={errors.price}>
           <div className="relative">
-            <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-muted">$</span>
+            <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-muted">₹</span>
             <Input
               id="price"
               name="price"
               inputMode="decimal"
               required
               defaultValue={v("price", item ? centsToInput(item.priceCents) : "")}
-              placeholder="0.00"
+              placeholder="0"
               className="pl-7"
               {...errorProps("price", errors.price)}
             />
@@ -68,7 +68,7 @@ export function FoodForm({
             required
             maxLength={50}
             defaultValue={v("category", item?.category ?? "")}
-            placeholder="e.g. Drinks"
+            placeholder="e.g. Seafood"
             {...errorProps("category", errors.category)}
           />
           <datalist id="category-options">

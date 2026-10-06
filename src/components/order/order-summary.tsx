@@ -100,7 +100,7 @@ export function OrderSummary({
               onChange={(e) => onNotesChange(e.target.value)}
               maxLength={500}
               rows={2}
-              placeholder="Allergies, no onions…"
+              placeholder="Spice level, allergies, delivery address…"
               className="mt-1.5 resize-none"
             />
           </div>
@@ -121,7 +121,7 @@ export function OrderSummary({
       <Button type="submit" size="lg" className="mt-4 w-full" disabled={empty || pending}>
         {pending ? "Submitting…" : "Submit order"}
       </Button>
-      <p className="mt-2 text-center text-xs text-muted">No payment needed now — pay on collection.</p>
+      <p className="mt-2 text-center text-xs text-muted">No payment needed now — pay on delivery or collection.</p>
     </form>
   );
 }

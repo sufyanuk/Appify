@@ -16,12 +16,12 @@ const imageField = z
     "Image must be a valid http(s) URL",
   );
 
-/** Accepts "5", "5.5" or "5.50" and converts dollars → integer cents. */
+/** Accepts "250", "99.5" or "99.50" and converts rupees → integer paise. */
 const priceField = z
   .string()
   .trim()
   .min(1, "Price is required")
-  .regex(/^\d+(\.\d{1,2})?$/, "Enter a valid price, e.g. 4.99")
+  .regex(/^\d+(\.\d{1,2})?$/, "Enter a valid price, e.g. 250 or 99.50")
   .transform((v) => Math.round(Number(v) * 100))
   .refine((c) => c > 0, "Price must be greater than 0")
   .refine((c) => c <= MAX_PRICE_CENTS, "Price is too high");
