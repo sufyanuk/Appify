@@ -41,14 +41,9 @@ export function SiteFooter() {
     <footer className="mt-auto border-t border-line/70">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs text-muted sm:flex-row sm:px-6">
         <p>© {new Date().getFullYear()} Kokni Jevan · Homemade Kokni food, cooked with love.</p>
-        <div className="flex gap-4">
-          <Link href="/credits" className="hover:text-ink">
-            Photo credits
-          </Link>
-          <Link href="/admin" className="hover:text-ink">
-            Admin login
-          </Link>
-        </div>
+        <Link href="/admin" className="hover:text-ink">
+          Admin login
+        </Link>
       </div>
     </footer>
   );

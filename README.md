@@ -185,7 +185,7 @@ Any other Node host (Railway, Render, Fly.io, a VPS) works too: run `npm run set
 
 ## Possible future improvements
 
-- **Your own photos.** The sample dishes use real, freely licensed photos from Wikimedia Commons (credited on `/credits`, listed in `src/lib/photos.ts`). Replacing them with photos of your own cooking (paste a link in Admin → Food items) makes the menu more authentic. Direct uploads could go to Vercel Blob.
+- **Your own photos.** The sample dishes use photos from Wikimedia Commons (listed in `src/lib/photos.ts`). Uploading photos of your own cooking (Admin → Food items → Upload from computer) makes the menu more authentic. Uploaded photos are resized in the browser and stored in the database (`UploadedImage`, served at `/api/images/<id>`). For very large catalogues, Vercel Blob or S3 would be a better long-term home.
 - **A delivery address field** on the order form. Customers can already add this in the order notes.
 - **Live order updates.** The admin orders list and the customer confirmation page could poll for or stream status changes.
 - **Shared rate limiting.** Swap the in-memory limiter for Upstash Redis when running on multiple instances.

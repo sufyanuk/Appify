@@ -85,6 +85,17 @@ model Recipe {
   updatedAt    DateTime @updatedAt
 }
 
+/// Food photos uploaded by the admin from their computer. Stored in the
+/// database (serverless hosts have no persistent disk) and served from
+/// /api/images/<id>. Photos are resized in the browser before upload.
+model UploadedImage {
+  id        String   @id @default(cuid())
+  mimeType  String
+  size      Int
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
 /// Records one-off data updates (e.g. a new menu) already applied by the
 /// seed, so they run once and never re-add items the admin has since deleted.
 model SeedRun {

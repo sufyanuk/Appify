@@ -1,11 +1,9 @@
 /**
- * Real food photos from Wikimedia Commons (freely licensed, mostly CC BY /
- * CC BY-SA). Images are served by Wikimedia via Special:FilePath, which
- * redirects to a resized copy. Each photo's author and licence are on its
- * Commons page, linked from the public /credits page.
+ * Sample food photos from Wikimedia Commons, served by Wikimedia via
+ * Special:FilePath (which redirects to a resized copy).
  *
- * To use your own photo instead, edit the dish in Admin → Food items and paste
- * its link into "Image URL".
+ * To use your own photo instead, edit the dish in Admin → Food items and
+ * upload it (or paste a link).
  */
 
 const COMMONS = "https://commons.wikimedia.org/wiki";
@@ -15,11 +13,6 @@ const encode = (file: string) => encodeURIComponent(file.replace(/ /g, "_"));
 /** Direct image URL for a Commons file, resized to `width` pixels. */
 export function commonsPhoto(file: string, width = 960): string {
   return `${COMMONS}/Special:FilePath/${encode(file)}?width=${width}`;
-}
-
-/** The Commons page for a file (author, licence, original). */
-export function commonsPage(file: string): string {
-  return `${COMMONS}/File:${encode(file)}`;
 }
 
 /** Commons file names, keyed by the dish they illustrate. */
@@ -86,63 +79,3 @@ export const PHOTOS = {
   seafoodSoup: "Shrimp and corn chowder.jpg",
   muttonSoup: "Afghani Mutton Shorba.JPG",
 } as const;
-
-export const PHOTO_CREDITS: { dish: string; file: string }[] = [
-  { dish: "Home page: Vada Pav", file: PHOTOS.homeVadaPav },
-  { dish: "Home page: Chicken Biryani", file: PHOTOS.homeBiryani },
-  { dish: "Malvani Fish Thali", file: PHOTOS.fishThali },
-  { dish: "Malvani Chicken Thali", file: PHOTOS.chickenThali },
-  { dish: "Surmai Fry", file: PHOTOS.surmaiFry },
-  { dish: "Surmai Fry with Kolambi Curry", file: PHOTOS.surmaiPrawnCurry },
-  { dish: "Bangda Curry Plate", file: PHOTOS.bangdaCurry },
-  { dish: "Bombil Fry", file: PHOTOS.bombilFry },
-  { dish: "Fish Koliwada", file: PHOTOS.fishKoliwada },
-  { dish: "Kombdi Vade", file: PHOTOS.kombdiVade },
-  { dish: "Pithla Bhakri", file: PHOTOS.pithlaBhakri },
-  { dish: "Misal Pav", file: PHOTOS.misalPav },
-  { dish: "Vada Pav", file: PHOTOS.vadaPav },
-  { dish: "Sabudana Vada", file: PHOTOS.sabudanaVada },
-  { dish: "Ukadiche Modak", file: PHOTOS.modak },
-  { dish: "Ukadiche Modak (recipe)", file: PHOTOS.modakPuneri },
-  { dish: "Aamras Puran Poli", file: PHOTOS.aamrasPuranPoli },
-  { dish: "Aamras (recipe)", file: PHOTOS.aamrasPuranPoli2 },
-  { dish: "Solkadhi", file: PHOTOS.solkadhi },
-  { dish: "Kokum Sharbat", file: PHOTOS.kokumSharbat },
-  { dish: "Veg Samosa", file: PHOTOS.vegSamosa },
-  { dish: "Non-veg Samosa", file: PHOTOS.nonVegSamosa },
-  { dish: "Chicken Tandoor Samosa", file: PHOTOS.tandoorSamosa },
-  { dish: "Cheese Samosa", file: PHOTOS.cheeseSamosa },
-  { dish: "Keema Samosa", file: PHOTOS.keemaSamosa },
-  { dish: "Dahi Vada", file: PHOTOS.dahiVada },
-  { dish: "Cutlets, Chicken Russian Kebab", file: PHOTOS.cutlets },
-  { dish: "Vada Pav (6 pcs)", file: PHOTOS.vadaPav6 },
-  { dish: "Box Patties", file: PHOTOS.boxPatties },
-  { dish: "Beef Shami Kebab", file: PHOTOS.shamiKebab },
-  { dish: "Mutton Shami Kebab", file: PHOTOS.muttonShamiKebab },
-  { dish: "Lagda", file: PHOTOS.lagda },
-  { dish: "Chana Masala", file: PHOTOS.chanaMasala },
-  { dish: "Potato Chat", file: PHOTOS.potatoChaat },
-  { dish: "Lagda Petis", file: PHOTOS.lagdaPetis },
-  { dish: "Chicken Sandwiches", file: PHOTOS.chickenSandwich },
-  { dish: "Veg Spring Rolls", file: PHOTOS.vegSpringRolls },
-  { dish: "Non-Veg Spring Rolls, Chicken Chinese Rolls", file: PHOTOS.springRolls },
-  { dish: "Gola Kebab", file: PHOTOS.golaKebab },
-  { dish: "Chicken Kofte", file: PHOTOS.chickenKofte },
-  { dish: "Mutton Kofte", file: PHOTOS.muttonKofte },
-  { dish: "Chicken Buns", file: PHOTOS.chickenBuns },
-  { dish: "Tandoori Club Sandwiches", file: PHOTOS.clubSandwich },
-  { dish: "Chicken Bread Rolls", file: PHOTOS.breadRolls },
-  { dish: "Chapli Kebab", file: PHOTOS.chapliKebab },
-  { dish: "Nuggets", file: PHOTOS.nuggets },
-  { dish: "Chicken Biryani", file: PHOTOS.chickenBiryani },
-  { dish: "Mutton Biryani", file: PHOTOS.muttonBiryani },
-  { dish: "Mutton Paaya, Beef Paaya", file: PHOTOS.paaya },
-  { dish: "Kheer", file: PHOTOS.kheer },
-  { dish: "Biscuit Delight", file: PHOTOS.biscuitPudding },
-  { dish: "Ghawna", file: PHOTOS.ghawna },
-  { dish: "Chicken Clear Soup", file: PHOTOS.chickenClearSoup },
-  { dish: "Chinese Soup", file: PHOTOS.chineseSoup },
-  { dish: "Aalni Palni Soup", file: PHOTOS.aalniPalniSoup },
-  { dish: "Seafood Creamy Soup", file: PHOTOS.seafoodSoup },
-  { dish: "Mutton Soup", file: PHOTOS.muttonSoup },
-];
