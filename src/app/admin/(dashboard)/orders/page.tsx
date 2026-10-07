@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminHeader } from "@/components/admin/admin-header";
+import { DeleteAllOrdersButton } from "@/components/admin/delete-all-orders-button";
 import { OrderItemsList } from "@/components/admin/order-row-items";
 import { StatusSelect } from "@/components/admin/status-select";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -8,6 +9,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import { cn } from "@/lib/cn";
 import { ORDER_STATUSES, ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/constants";
 import { getOrders } from "@/lib/data/orders";
+import { db } from "@/lib/db";
 import { formatDateTime, formatPrice } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Orders" };
@@ -26,11 +28,15 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
     status === "pending" || (ORDER_STATUSES as readonly string[]).includes(status)
       ? (status as OrderStatus | "pending")
       : undefined;
-  const orders = await getOrders(filter);
+  const [orders, totalOrders] = await Promise.all([getOrders(filter), db.order.count()]);
 
   return (
     <>
-      <AdminHeader title="Orders" description="Update the status as each order moves through the kitchen." />
+      <AdminHeader
+        title="Orders"
+        description="Update the status as each order moves through the kitchen."
+        action={totalOrders > 0 ? <DeleteAllOrdersButton count={totalOrders} /> : undefined}
+      />
 
       <div className="-mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
         {filters.map((f) => {

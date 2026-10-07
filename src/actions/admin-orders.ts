@@ -29,3 +29,19 @@ export async function updateOrderStatus(orderId: number, status: string): Promis
     return { ok: false, message: "Could not update the order status." };
   }
 }
+
+/** Permanently delete every order (and its items). Used to clear test orders. */
+export async function deleteAllOrders(): Promise<ActionResult> {
+  await requireAdmin();
+  try {
+    const { count } = await db.order.deleteMany({});
+    revalidatePath("/admin", "layout");
+    return {
+      ok: true,
+      message: count === 0 ? "There were no orders to delete." : `Deleted ${count} order${count === 1 ? "" : "s"}.`,
+    };
+  } catch (error) {
+    console.error("deleteAllOrders failed", error);
+    return { ok: false, message: "Could not delete the orders." };
+  }
+}
