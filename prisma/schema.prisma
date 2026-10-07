@@ -1,0 +1,115 @@
+// Prisma schema — the single source of truth for the database structure.
+//
+// Uses PostgreSQL everywhere (local + production). Point DATABASE_URL at any
+// Postgres: Neon / Supabase / Prisma Postgres (e.g. via the Vercel Marketplace)
+// or a local server. See README → "Running it locally".
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FoodItem {
+  id          String      @id @default(cuid())
+  name        String
+  description String      @default("")
+  /// Price in cents (integer) to avoid floating point rounding errors.
+  priceCents  Int
+  image       String      @default("")
+  category    String      @default("Other")
+  available   Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+
+  @@index([available])
+  @@index([category])
+}
+
+model Order {
+  /// Internal sequential id — used to build the human readable order number.
+  id            Int         @id @default(autoincrement())
+  /// Unguessable id used in the public confirmation URL.
+  publicId      String      @unique @default(cuid())
+  /// Human friendly number shown to customers, e.g. "ORD-1024".
+  orderNumber   String      @unique
+  customerName  String      @default("")
+  customerPhone String      @default("")
+  notes         String      @default("")
+  totalCents    Int
+  /// One of: RECEIVED, PREPARING, READY, COMPLETED, CANCELLED
+  status        String      @default("RECEIVED")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  items         OrderItem[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// A line on an order. Name and price are copied at order time so the order
+/// history stays correct even if the menu item is later edited or deleted.
+model OrderItem {
+  id             String    @id @default(cuid())
+  orderId        Int
+  order          Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodItemId     String?
+  foodItem       FoodItem? @relation(fields: [foodItemId], references: [id], onDelete: SetNull)
+  name           String
+  unitPriceCents Int
+  quantity       Int
+  lineTotalCents Int
+
+  @@index([orderId])
+}
+
+model Recipe {
+  id           String   @id @default(cuid())
+  name         String
+  description  String   @default("")
+  image        String   @default("")
+  /// One ingredient per line.
+  ingredients  String
+  /// One step per line.
+  instructions String
+  /// Total preparation + cooking time, in minutes.
+  cookingTime  Int
+  servings     Int      @default(2)
+  /// One of: Easy, Medium, Hard
+  difficulty   String   @default("Easy")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+/// Food photos uploaded by the admin from their computer. Stored in the
+/// database (serverless hosts have no persistent disk) and served from
+/// /api/images/<id>. Photos are resized in the browser before upload.
+model UploadedImage {
+  id        String   @id @default(cuid())
+  mimeType  String
+  size      Int
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
+/// Records one-off data updates (e.g. a new menu) already applied by the
+/// seed, so they run once and never re-add items the admin has since deleted.
+model SeedRun {
+  id        String   @id
+  appliedAt DateTime @default(now())
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String   @default("Admin")
+  passwordHash String
+  /// Bumped on password change to invalidate existing sessions.
+  tokenVersion Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
